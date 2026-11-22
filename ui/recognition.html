@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Recognition · Ultimodel</title>
+<style>
+*{box-sizing:border-box}body{max-width:1050px;margin:auto;padding:22px;background:#f3f2ec;color:#1d3736;font:16px/1.5 system-ui}h1,h2,h3{font-family:Georgia,serif;font-weight:500;margin:8px 0}section,details{background:#fff;border:1px solid #c8d5cd;padding:16px;margin:12px 0;border-radius:8px}label{display:block;font-weight:550;margin:7px 0}input,textarea,select,button{font:inherit;padding:7px;border:1px solid #92a79c;border-radius:4px}input,textarea,select{display:block;width:100%}button{background:#e5ece6;cursor:pointer;margin:4px}button.primary{background:#195c52;color:white}a{color:#165c51}.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}pre,blockquote{white-space:pre-wrap;overflow-wrap:anywhere}blockquote{border-left:3px solid #92aba1;padding-left:12px;margin-left:0}summary{cursor:pointer}#msg{position:sticky;top:0;background:#fff2c9}fieldset{border:0;padding:0;margin:0;min-width:0}@media(max-width:640px){.cols{grid-template-columns:1fr}}
+</style><a href="/">← Calculator</a> · <a href="/tokens">Token engine</a><h1>Recognition / Resonance</h1>
+<p id="msg" role="status"></p><fieldset id="workspace">
+<section><h2>Phenomenological capture</h2><label>What did you notice?<textarea id="notice"></textarea></label><label>What did it remind you of?<textarea id="remind"></textarea></label><button id="capture" class="primary">RECOGNITION WAVE · Save</button></section>
+<section><h2>Recorded waves</h2><select id="events" aria-label="Recorded waves"></select><button id="open">Open event</button><details><summary>Broken Rhymes</summary><div id="broken"></div></details></section>
+<main id="invest" hidden><section><h2>Original account</h2><time id="stamp"></time><blockquote id="original"></blockquote><blockquote id="association"></blockquote></section>
+<section><h2>Structural analysis</h2><div id="context"></div><details><summary>Source references and initial impressions</summary><div id="references"></div></details>
+<div class="cols"><div><h3>Observation A</h3><div id="A"></div></div><div><h3>Reference B</h3><div id="B"></div></div></div>
+<h3>Proposed correspondence</h3><div id="proposal"></div><details><summary>Counterexample questions</summary><div id="questions"></div></details>
+<h3>Result</h3><div id="judgment"></div><button id="review" class="primary">Save investigation</button><button id="challenge">TRY TO BREAK THIS</button>
+<p id="outcome"></p><div id="readings"></div><details><summary>Inspect comparison record</summary><pre id="results"></pre></details></section>
+<section><h2>Recognition through time</h2><label>Stage<select id="stage"><option>First sensation</option><option>First association</option><option>Explicit idea</option><option>Formal hypothesis</option><option>Verification</option></select></label><label>What happened?<textarea id="stageNote"></textarea></label><button id="addStage">Append stage</button><ol id="timeline"></ol>
+<button id="json">Export event JSON</button><button id="csv">Export event CSV</button></section></main>
+<details><summary>Relationship families</summary><label>Family name<input id="familyName"></label><label>Source observations (select two or more)<select id="members" multiple size="5"></select></label><label>How were these independently observed?<textarea id="independence"></textarea></label><button id="family">Create family from selected reviews</button><pre id="families"></pre></details></fieldset>
+<script>
+const $=id=>document.getElementById(id), keys=[];
+function field(host,key,title,options){
+ const label=document.createElement('label');label.textContent=title;
+ const n=document.createElement(options?'select':'input');n.id=key;keys.push(key);
+ if(options)options.forEach(s=>n.add(new Option(s,s)));label.append(n);$(host).append(label);
+}
+const entries=(host,list)=>list.forEach(([k,t,o])=>field(host,k,t,o));
+entries('context',[['source_domain','Source domain'],['reference_domain','Reference domain'],['prompt','What prompted the recognition?'],['capture_lens','Lens’ active when noticed'],['reference_id','Compare with a saved observation (optional)',['']]]);
+entries('references',[['confidence_initial','Initial confidence (self-report)'],['emotional_salience','Emotional salience'],['notes','Notes'],...['image','equation','music','game','story','physical_object'].map(x=>[x+'_reference',x.replace('_',' ')+' reference'])]);
+const geometry=['','line','angle','triangle','rectangle','square','circle','spiral','polygon','ratio between lengths','ratio between areas','symmetry','rotation','reflection'];
+for(const s of 'AB')for(const [k,t,o] of [['ratio','Measurements, e.g. 10:6.18'],['lens','Ratio orientation',['Forward','Reverse']],['geometry','Geometry',geometry],['topology','Declared topology'],['operator','Declared operator'],['sequence','Sequence (comma-separated)'],['token','Optional L/F/M token'],['token_lens','Token Lens’ definition'],['token_confidence','Token confidence (0–1)']])field(s,k+'_'+s,t,o);
+entries('proposal',[['hypothesis','Primary test',['Pair','Phi']],['tolerance','φ tolerance, relative percent (optional)'],['elapsed','Elapsed ticks for token comparison (optional)'],['suspected_pattern','Suspected pattern'],['suspected_ratio','Suspected ratio'],['suspected_geometry','Suspected geometry'],['suspected_periodicity','Suspected periodicity'],['suspected_transformation','Suspected transformation'],['invariant','Candidate invariant'],['preserved','Preserved features'],['different','Different features'],['unknown','Unknown features']]);
+entries('questions',[['counter_difference','What differs?'],['required_transform','What transformation made them match?'],['chance','Would random examples match equally well?'],['discarded','What did normalization discard?'],['inversion','Does it survive inversion?'],['scaling','Does it survive scale change?'],['alternate_lens','Which other Lens’ breaks it?']]);
+entries('judgment',[['status','Classification (blank uses measured primary test)',['','Unexamined','Surface Similarity','Structurally Similar','Normalized Match','Partial Match','Broken Rhyme','Validated Under Current Model']],['evidence','Evidence'],['counterevidence','Counterevidence'],['confidence','Current confidence'],['next_test','Next test']]);
+let active=null, index=null;
+async function api(action,extra={},csv=false){
+ const res=await fetch('/api/recognition'+(csv?'.csv':''),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...extra})});
+ if(!res.ok)throw Error((await res.json()).error);
+ return csv?res.text():res.json();
+}
+function bind(id,fn){
+ $(id).onclick=async()=>{if($('workspace').disabled)return;$('workspace').disabled=true;$('msg').textContent='';
+ try{await fn()}catch(e){$('msg').textContent=e.message}finally{$('workspace').disabled=false}};
+}
+function listOptions(id,items,blank){
+ const n=$(id),previous=n.value;n.replaceChildren();if(blank)n.add(new Option('Use original association',''));
+ items.forEach(e=>n.add(new Option(e.timestamp.slice(0,19)+' · '+e.observation.slice(0,65),e.id)));
+ if([...n.options].some(o=>o.value===previous))n.value=previous;
+}
+async function refresh(){
+ index=await api('catalog');listOptions('events',index.events,false);listOptions('members',index.events,false);
+ listOptions('reference_id',index.events.filter(e=>e.id!==active?.event),true);
+ $('broken').replaceChildren();for(const b of index.broken){const el=document.createElement('button');el.type='button';el.textContent=b.timestamp+' · '+(b.reason||'Failed comparison');el.onclick=async()=>{try{show(await api('read',{event:b.id}));$('msg').textContent='Broken review #'+b.revision+' is preserved in the timeline.'}catch(e){$('msg').textContent=e.message}};$('broken').append(el)}
+ if(!index.broken.length)$('broken').textContent='No recorded failures.';$('families').textContent=JSON.stringify(index.families,null,2);
+}
+function show(record,restore=true){
+ active=record;$('invest').hidden=false;$('events').value=record.event;
+ listOptions('reference_id',index.events.filter(e=>e.id!==record.event),true);
+ const first=record.history[0],capture=first.data,reviews=record.history.filter(r=>r.data.candidate),latest=reviews.at(-1)?.data;
+ $('stamp').textContent=first.stamp;$('original').textContent=capture.source_observation;$('association').textContent=capture.candidate_reference;
+ if(restore)for(const k of keys){const n=$(k);n.value=latest?.form[k]??(n.options?n.options[0].value:'')}
+ $('outcome').textContent=latest?'Saved classification · '+latest.verification_status+' | Primary test · '+latest.candidate.suggested_status:'Unexamined';
+ const readings=$('readings');readings.replaceChildren();
+ function line(text){const p=document.createElement('p');p.textContent=text;readings.append(p)}
+ if(latest){
+  for(const s of 'AB'){
+   const obj=latest.candidate[s],r=obj.ratio;
+   if(r)line(s+' · '+r.raw_ratio+' → '+(r.normalized_ratio??'undefined normalization')+' ('+obj.lens+')');
+   if(obj.phi_test)line(s+' · oriented quotient = '+obj.phi_test.measured_ratio.toPrecision(9)+' · '+obj.phi_test.percent_error.toPrecision(4)+'% from φ');
+   if(obj.sequence)line(s+' · observed period: '+(obj.sequence.observed_period??'undetermined'));
+  }
+  line(Object.entries(latest.candidate.similarity_score).map(([k,v])=>k+': '+(v??'unassessed')).join(' · '));
+  if(latest.challenge)line('Pair tests · '+['current','both_inverted','only_B_inverted','independently_scaled'].map(k=>k.replaceAll('_',' ')+': '+({true:'match',false:'differs',null:'unknown'}[latest.challenge[k]])).join(' · '));
+ }
+ $('results').textContent=latest?JSON.stringify({comparison:latest.candidate,counterexample_tests:latest.challenge},null,2):'';
+ $('timeline').replaceChildren();for(const row of record.history){const li=document.createElement('li');const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');
+ summary.textContent=row.stamp+' · '+(row.data.stage||row.kind)+' · #'+row.seq;pre.textContent=JSON.stringify(row.data,null,2);details.append(summary,pre);li.append(details);$('timeline').append(li)}
+}
+bind('capture',async()=>{const record=await api('capture',{request:crypto.randomUUID(),observation:$('notice').value,reference:$('remind').value});await refresh();show(record);$('notice').value='';$('remind').value='';$('msg').textContent='Wave saved.'});
+bind('open',async()=>{show(await api('read',{event:$('events').value}))});
+for(const action of ['review','challenge','stage'])bind(action==='stage'?'addStage':action,async()=>{
+ const form=Object.fromEntries(keys.map(k=>[k,$(k).value]));
+ const record=await api(action,{event:active.event,revision:active.history.at(-1).seq,request:crypto.randomUUID(),form,stage:$('stage').value,note:$('stageNote').value});
+ await refresh();show(record,action!=='stage');if(action==='stage'){$('reference_id').value=form.reference_id;$('stageNote').value=''}$('msg').textContent='Journal entry saved.';
+});
+for(const format of ['json','csv'])bind(format,async()=>{
+ const record=await api('read',{event:active.event},format==='csv');
+ const blob=new Blob([format==='csv'?record:JSON.stringify(record,null,2)],{type:format==='csv'?'text/csv;charset=utf-8':'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='recognition-'+active.event+'.'+format;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+});
+bind('family',async()=>{await api('family',{request:crypto.randomUUID(),name:$('familyName').value,independence:$('independence').value,members:[...$('members').selectedOptions].map(o=>o.value)});await refresh();$('msg').textContent='Family saved.'});
+refresh().catch(e=>$('msg').textContent=e.message);
+</script></html>

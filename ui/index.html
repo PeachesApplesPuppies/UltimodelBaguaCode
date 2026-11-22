@@ -1,0 +1,185 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ultimodel’ · Relationship instrument</title>
+<style>
+:root{--ink:#193538;--teal:#12645d;--soft:#e1efea;--line:#ccd8d3}*{box-sizing:border-box}body{margin:0;background:#f2f3ef;color:var(--ink);font:15px/1.45 system-ui,sans-serif}header,main{max-width:1250px;margin:auto;padding:22px}header{padding-bottom:0}small{letter-spacing:.14em;color:#526b65}h1{margin:5px 0;font:clamp(28px,4vw,45px) Georgia,serif}h2{margin:0 0 9px;font:24px Georgia,serif}h3{margin:9px 0}section{background:white;border:1px solid var(--line);border-radius:9px;padding:18px;min-width:0}main{display:grid;grid-template-columns:minmax(260px,1fr) minmax(420px,2fr);gap:14px}.wide{grid-column:1/-1}label{display:block;font-size:13px;font-weight:600;margin:6px 0}input,select,button{font:inherit;color:var(--ink);border:1px solid #9cafa9;border-radius:5px;padding:7px;background:white;width:100%}button{width:auto;cursor:pointer;background:var(--soft)}button:hover{background:#ccded8}button.primary,button.active{background:var(--teal);color:white}button:disabled{opacity:.5;cursor:auto}.row{display:flex;gap:7px;align-items:end;flex-wrap:wrap}.row>label{flex:1;min-width:60px}.note{font-size:13px;color:#536762}.row button{margin:5px 0}.split{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.tile{background:#f5f8f6;padding:9px;border-radius:5px;overflow-wrap:anywhere}.tile b{display:block;font-size:18px}.boundary{color:#993d25}.symbol{font-family:ui-monospace,monospace;font-size:13px}#graph{width:100%;height:auto;display:block}.check{display:inline-flex;align-items:center;gap:4px;font-size:13px;margin:4px 10px 4px 0}.check input{width:auto}details{margin:9px 0}summary{cursor:pointer}.stat{background:var(--soft);padding:8px;border-radius:4px}#error:not(:empty){padding:10px;background:#ffe6db;color:#762e1c}li{overflow-wrap:anywhere}@media(max-width:760px){main{display:block}section{margin:10px 0}.split{grid-template-columns:1fr}} 
+</style>
+<header><small>BCE / HYPOTHETICAL EXPLORATION DEPARTMENT</small><h1>UltimAtom · Function calculator</h1><span>Calculator / Grapher · v0.5</span> · <a href="/tokens">Token engine</a> · <a href="/recognition">Recognition</a></header>
+<main><section><h2>Select inputs</h2><label>Experiment<select id="preset"></select></label>
+
+<label>§ A<input id="A" value="f(x) = x^2"></label><label>§ B<input id="B" value="0"></label>
+<div class="row"><label>t start<input id="lo" type="number" value="-5" step="any"></label><label>t end<input id="hi" type="number" value="5" step="any"></label><label>Probe t<input id="t" type="number" value="1" step="any"></label></div>
+<label>Integral lower bound<input id="anchor" type="number" step="any" value="0"></label><label>Parameter values (optional)<input id="params" placeholder="k=2, C=5"></label>
+<button class="primary" id="calc">Calculate</button>
+<details><summary>Expression reference</summary><p class="note">Use 2*t or 2t; write x*y for two named factors. Powers: ^ or **. Functions: sin, cos, tan (radians), exp, log (natural), sqrt, abs, inv, ratio(a,b)=a/b, delta(a,b)=b−a. Type f(x)=2x^2, g(u)=sin(u), y=x^2, or a bare expression in x or t. A function argument maps to the horizontal axis t. Other symbols are parameters. Also supports ln, log10, asin, acos, atan, sinh, cosh, tanh. A named § can be called at another point, e.g. R1(t+1). Unassigned names stay symbolic; give them values to plot.</p></details>
+</section><section><h2>Compare</h2><label>Mathematical rule<select id="rule"></select></label>
+<label>Polarity shift · p = <output id="pout">1</output><input type="range" min="-1" max="1" step="0.05" value="1" id="shift"></label>
+<div class="row"><button id="negative">−1</button><button id="neutral">0</button><button id="positive">+1</button></div><p class="note">The slider scales the function, derivative, integral, or shifted delta. Integration runs from the lower bound to the probe or graph coordinate. Lens chooses the reference used in all oriented rules.</p><div id="answer" class="stat" aria-live="polite"></div><div class="row"><button id="la">Lens A</button><button id="lb">Lens B</button><span id="comp"></span></div><p id="orient" class="stat"></p><div class="split" id="metrics"></div><div id="error" role="alert"></div></section>
+<section class="wide"><h2>Periodic table</h2><label>Send the clicked element to<select id="elementTarget"><option>A</option><option>B</option></select></label>
+<div style="overflow-x:auto"><div id="elementGrid" aria-label="Periodic table" style="display:grid;grid-template-columns:repeat(18,minmax(37px,1fr));gap:3px"></div></div>
+<label>Element<select id="elementSelect"></select></label><label>Property<select id="elementField"><option value="Z">Atomic number (proton count)</option><option value="Ar">Abridged standard atomic weight (dimensionless)</option><option value="uncertainty">Atomic-weight uncertainty (dimensionless)</option></select></label>
+<p id="elementValue" aria-live="polite"></p><button id="toA" disabled>Use in A</button> <button id="toB" disabled>Use in B</button>
+<p class="note">Expressions use the selected scalar value. Uncertainties are available separately. <a href="https://ciaaw.org/abridged-atomic-weights.htm">CIAAW · 2024 table and notes</a></p></section>
+<section class="wide"><div style="display:flex;align-items:center;gap:12px"><h2>Graph</h2><span id="graphCode"></span></div><div id="checks"></div><svg viewBox="0 0 960 330" id="graph" role="img" aria-label="Selected quantities versus time"></svg><div class="note" id="graphstatus"></div></section>
+<section><h2>Promote to §</h2><label>Name<input id="name" placeholder="R1"></label><p class="note">Promote the selected mathematical rule, then use the saved name as either input.</p><button id="promote">Promote to §</button>
+<label>Or define an expression<input id="expr" placeholder="sin(t) + 1"></label><button id="define">Define §</button><ul id="registry"></ul><p class="note">Use a saved name directly in A or B. Definitions are kept in this browser. Parameters and t remain live.</p></section>
+<section class="wide"><h2>Color / contrast code</h2><p>Enter the frequency and magnitude for your BCE comparison. Leave both blank to use the evaluated A and B as display factors F and M.</p>
+<div class="row"><label>Frequency F<input id="frequency" placeholder="e.g. 2"></label><label>Magnitude M<input id="magnitudeInput" placeholder="e.g. abs(t)"></label></div>
+<button id="colorExample">Try F = 2, M = 6</button>
+<div id="colorMark"></div><p class="note">Hue follows p × F × M. Zero polarity gives gray. Shade follows |M|. The arrow points toward (F, M), with positive F right and positive M up. A dot marks the origin.</p>
+<p id="colorOut" aria-live="polite"></p></section>
+<section class="wide"><h2>Zero Spin</h2><p>Inspect three source values at the probe. Flip Lens to reverse the cycle.</p>
+<div class="row"><label>Third input C<input id="spinC" value="0"></label><label>Rate evidence<select id="spinMode"><option value="formula">Use source functions</option><option value="reading">Use readings only</option></select></label><button id="spinPreset">Run 1 : 1 : 0</button></div>
+<div id="spinOut" aria-live="polite"></div></section>
+<section class="wide"><details id="samples"><summary>Three-value finite-difference table</summary><label>Step h<input type="number" id="step" min="0" step="any" value="1"></label><p class="note">Samples the selected Lens source at t, t+h and t+2h. Zero return gap is one observed return.</p><p id="tableout"></p></details></section><section><h2>Notes and record</h2><p id="status" aria-live="polite"></p><button id="download">Export calculation JSON</button><details open><summary>Notation and scope</summary><p><b>Standard math.</b> Equality, order comparison, arithmetic, ratios and time derivatives over real numbers.</p><p><b>BCE terminology.</b> § names a Variable’, ◯ an operation, and ❂ / ⊛ the two orientations. Flow’ means rate of change of delta.</p><p><b>Open hypothesis.</b> Whether recentering exposes useful patterns is a question for experiments. A changed Lens reads the same source pair.</p></details></section></main>
+<script>
+const $=id=>document.getElementById(id),fmt=v=>v===null?'—':Number(v.toPrecision(9)).toString();
+const captions={function:'Function · p × f',derivative:'Derivative · p × df/dt',integral:'Integral · p × ∫ f dt',shifted:'Shifted delta · p × Δ',product:'Product',sum:'Sum',quotient:'Reference / other',inverseQuotient:'Other / reference',oppositeDelta:'Opposite delta',A:'A',B:'B',delta:'Signed delta',magnitude:'Magnitude',X:'Normalized X',inverseX:'Inverse X',flow:'Flow’ · rate of change of delta'};
+const colors=['#186a66','#975213','#6b4193','#a02862','#625298','#485e14','#62532a','#514f83','#8c541d','#12665c','#af4c28','#2b58a3','#805c16','#75409a','#a83268','#315626'];let lens='A',vars=[],last=null,serial=0;
+try{vars=JSON.parse(localStorage.getItem('bce-ultimodel-v01')||'[]')}catch{}
+const experiments=[['Free function','f(x) = x^2','0'],['Period check · sine','sin(t)','sin(t+2*pi)'],['Period check · drift','t','t+2*pi'],['Linear flow','t','2*t'],['Triangle · vertex rate (events/s)','3','1'],['Triangle · boundary density (vertices/cm)','3','6'],['Equal','1','1'],['Polarity','1','2'],['Reduction','3','6'],['Negative','-1','1'],['Boundary','1','0'],['Constant delta','t','t+5'],['Periodic','sin(t)','cos(t)'],['Exponential','exp(t)','1'],['Shared zero','t','2*t']];
+experiments.forEach(([n],i)=>$('preset').add(new Option(n,i)));
+Object.entries(captions).forEach(([k,v],i)=>{const l=document.createElement('label');l.className='check';const cb=document.createElement('input');cb.type='checkbox';cb.value=k;cb.checked=k==='function';cb.onchange=()=>run();l.style.color=colors[i];l.append(cb,document.createTextNode(v));$('checks').append(l)});
+for(const [k,v] of Object.entries(captions))$('rule').add(new Option(v,k));
+function plotRule(){const key=$('rule').value;for(const c of $('checks').querySelectorAll('input'))c.checked=c.value===key;run()}
+$('rule').onchange=plotRule;
+function shift(value){$('shift').value=value;$('pout').textContent=value;if(!['function','derivative','integral'].includes($('rule').value))$('rule').value='shifted';plotRule()}
+$('shift').oninput=()=>shift($('shift').value);
+for(const [id,value] of [['negative',-1],['neutral',0],['positive',1]])$(id).onclick=()=>shift(value);
+function inputs(){
+ const parameters={};for(const item of $('params').value.split(',').map(x=>x.trim()).filter(Boolean)){const m=item.match(/^([A-Za-z][A-Za-z0-9_]*)\s*=\s*(.+)$/);if(!m||!Number.isFinite(Number(m[2])))throw Error('Parameter format: k=2, C=5');parameters[m[1]]=Number(m[2])}
+ function expression(id){
+  let source=$(id).value.trim().replace(/^y\s*=\s*/, '');
+  const explicit=/^[A-Za-z]\w*\s*\(/.test(source)&&source.includes('=');
+  if(!explicit && /\bx\b/.test(source) && !/\bt\b/.test(source) &&
+     !Object.hasOwn(parameters,'x') && !vars.some(v=>v.name==='x'))source='f(x)='+source;
+  return source;
+ }
+ const linkFactors=!$('frequency').value.trim() && !$('magnitudeInput').value.trim();
+ return {frequency:linkFactors?expression("A"):$('frequency').value,magnitude:linkFactors?expression("B"):$('magnitudeInput').value,spin_C:expression("spinC"),reading_only:$('spinMode').value==="reading",sample_step:$('samples').open?$('step').value:null,anchor:$('anchor').value,rule:$('rule').value,polarity:Number($('shift').value),A:expression('A'),B:expression('B'),lens,t:$('t').value,lo:$('lo').value,hi:$('hi').value,parameters,variables:vars,plots:[...$('checks').querySelectorAll(':checked')].map(c=>c.value)}
+}
+function draw(data){
+ const svg=$('graph');svg.replaceChildren();const add=(tag,attrs,txt)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(txt)n.textContent=txt;svg.append(n)};
+ const groups=Object.entries(data.plots),pts=groups.flatMap(([,ss])=>ss.flat());if(!pts.length){add('text',{x:70,y:160},'No plottable samples in this view.');return}
+ const ys=pts.map(p=>p[1]);let ymin=Math.min(...ys),ymax=Math.max(...ys);if(ymin===ymax){ymin-=Math.max(1,Math.abs(ymin)*.1);ymax+=Math.max(1,Math.abs(ymax)*.1)}
+ const [l,h]=data.range,xx=t=>90+845*(t-l)/(h-l),yy=y=>290-265*(y-ymin)/(ymax-ymin);
+ for(let j=0;j<=4;j++){let y=ymin+(ymax-ymin)*j/4;add('line',{x1:90,x2:935,y1:yy(y),y2:yy(y),stroke:'#dae3df'});add('text',{x:5,y:yy(y)+4,'font-size':12},Number(y.toPrecision(4)).toString());let t=l+(h-l)*j/4;add('text',{x:xx(t)-4,y:311,'font-size':12},Number(t.toPrecision(4)).toString())}
+ add('text',{x:947,y:312},'t');groups.forEach(([k,ss])=>{const color=colors[Object.keys(captions).indexOf(k)];ss.forEach(seg=>{if(seg.length===1)add('circle',{cx:xx(seg[0][0]),cy:yy(seg[0][1]),r:1.7,fill:color});else add('polyline',{points:seg.map(([t,y])=>xx(t)+','+yy(y)).join(' '),fill:'none',stroke:color,'stroke-width':2})})})
+}
+function renderCode(v) {
+ const mark=$('colorMark'), graph=$('graphCode');
+ mark.replaceChildren();graph.replaceChildren();
+ if(!v)return;
+ const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('viewBox','0 0 80 80');svg.setAttribute('width','80');
+ svg.setAttribute('height','80');svg.setAttribute('aria-hidden','true');
+ function shape(tag,attributes){
+   const el=document.createElementNS(ns,tag);
+   for(const [key,value] of Object.entries(attributes))el.setAttribute(key,value);
+   svg.append(el);
+ }
+ shape('rect',{width:80,height:80,rx:10,fill:v.hex});
+ if(v.angle_degrees===null)shape('circle',{cx:40,cy:40,r:5,fill:v.ink});
+ else shape('path',{d:'M 22 40 H 62 M 51 29 L 62 40 L 51 51',fill:'none',stroke:v.ink,'stroke-width':5,transform:'rotate('+(-v.angle_degrees)+' 40 40)'});
+ mark.append(svg);
+ const small=svg.cloneNode(true);small.setAttribute('width','32');small.setAttribute('height','32');graph.append(small);
+ const orientation=v.angle_degrees===null?'origin':v.angle_degrees.toFixed(2)+'°';
+ mark.append(document.createTextNode(' '+v.hex+' · '+orientation+' · ink contrast '+v.contrast_ratio.toFixed(2)+':1'));
+ graph.title='Probe color '+v.hex+' · '+orientation;
+}
+function showResult(d){
+ const q=d.quantities,[u,v]=d.lens==='A'?['A','B']:['B','A'];$('comp').textContent=d.comparison;$('orient').textContent=u+' reference · Δ = '+v+' − '+u+' · X = '+v+'/'+u;
+ $('metrics').replaceChildren();function tile(n,value,sub,bad=false){let g=document.createElement('div');g.className='tile'+(bad?' boundary':'');let title=document.createElement('span'),b=document.createElement('b'),s=document.createElement('div');title.textContent=n;b.textContent=value;s.className='symbol';s.textContent=sub;g.append(title,b,s);$('metrics').append(g)}
+ const val=k=>q[k].value===null?(q[k].status==='symbolic'?q[k].expr:q[k].status):fmt(q[k].value);
+ const chosen=$('rule').value;
+ $('answer').textContent=captions[chosen]+' = '+val(chosen)+'   ·   '+q[chosen].expr+(q[chosen].detail?' · '+q[chosen].detail:'');
+ if(chosen==='integral')$('answer').textContent+=' · Numerical definite integral'+(d.antiderivative?' · Antiderivative: '+d.antiderivative:'');
+ tile('Source pair '+u+' : '+v,val(u)+' : '+val(v),'Inverse pair '+val(v)+' : '+val(u));
+ tile('Normalized pair and its reversal',q.X.status.startsWith('Undefined')?val('X'):'1 : '+val('X'),q.X.value!==null?'Reversed pair '+val('X')+' : 1':'X = '+q.X.expr);
+ for(const [k,n] of [['delta','Δ('+u+', '+v+')'],['oppositeDelta','Δ('+v+', '+u+')'],['magnitude','Absolute delta'],['quotient',u+' / '+v],['inverseQuotient',v+' / '+u],['inverseX','Reverse Lens · normalized 1 : X'],['flow',captions.flow]]){
+ tile(n,k==='inverseX'&&!q[k].status.startsWith('Undefined')?'1 : '+val(k):val(k),q[k].expr+(q[k].detail?' · '+q[k].detail:''),q[k].status.startsWith('Undefined'))}
+ $('registry').replaceChildren();vars.forEach(r=>{let li=document.createElement('li');li.textContent=r.name+' = '+(r.kind==='variable'?r.expression:r.result+(['shifted','function','derivative','integral'].includes(r.result)?' p='+r.polarity+(r.result==='integral'?' from '+r.anchor:''):'')+' ['+r.lens+' Lens] on ('+r.A+', '+r.B+')');$('registry').append(li)});
+ $('status').textContent='Probe t = '+d.probe_t+' · '+[...new Set(Object.values(q).map(z=>z.status))].join(' / ');
+ $('graphstatus').textContent='Numerical approximation · 241 samples per curve · gaps mark undefined samples or intervals where continuity could not be verified.';
+ const output=$('spinOut');output.replaceChildren();
+ const line=text=>{const p=document.createElement('p');p.textContent=text;output.append(p)};
+ for(const [key,pt] of Object.entries(d.zero_spin.points)){
+  const rate=pt.rate.value===null?pt.rate.status:fmt(pt.rate.value);
+  line(key+' = '+(pt.value.value===null?pt.value.status:fmt(pt.value.value))+' · '+pt.sign+' · local rate: '+rate)
+ }
+ for(const step of d.zero_spin.steps){
+  line(step.pair+'   Δ '+(step.delta.value===null?step.delta.status:fmt(step.delta.value))+
+       '   ·   quotient '+(step.quotient.value===null?step.reason:fmt(step.quotient.value)))
+ }
+ const code=d.color_contrast;
+ renderCode(code.visual);
+ const display=r=>r.value===null?r.status:String(r.value);
+ $('colorOut').textContent='F = '+display(code.frequency)+' · M = '+display(code.magnitude)+' · C = F × M = '+display(code.product);
+ const table=d.difference_table;
+ $('tableout').textContent=table?'Values: '+table.values.map(fmt).join(', ')+'   ·   First differences: '+table.first.map(fmt).join(', ')+'   ·   Second difference: '+fmt(table.second)+'   ·   Return gap: '+fmt(table.return_gap):'';
+ draw(d);
+}
+async function run(extra=null){
+ let id=++serial,p;last=null;$('promote').disabled=true;
+ try{p=inputs();if(extra)p.variables=[...vars,extra];let resp=await fetch('/api/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});let d=await resp.json();if(id!==serial)return false;if(!resp.ok)throw Error(d.error);
+ if(extra){vars=p.variables;localStorage.setItem('bce-ultimodel-v01',JSON.stringify(vars))}
+ $('error').textContent='';last=d;showResult(d);$('promote').disabled=false;return true
+ }catch(e){if(id!==serial)return false;$('answer').textContent='';$('spinOut').replaceChildren();renderCode(null);$('colorOut').textContent='';$('error').textContent=e.message;last={timestamp:new Date().toISOString(),A:$('A').value,B:$('B').value,lens,variables:vars,error:e.message,request:p};$('status').textContent='Error · see input message.';$('metrics').replaceChildren();$('graph').replaceChildren();$('comp').textContent='';$('orient').textContent='';$('graphstatus').textContent='';$('tableout').textContent='';return false}}
+function switchLens(l){lens=l;$('la').className=l==='A'?'active':'';$('lb').className=l==='B'?'active':'';run()}
+$('la').onclick=()=>switchLens('A');$('lb').onclick=()=>switchLens('B');$('calc').onclick=()=>run();
+$('preset').onchange=()=>{const [n,a,b]=experiments[$('preset').value];$('A').value=a;$('B').value=b;$('t').value=n==='Shared zero'?0:1;$('rule').value=n.startsWith('Triangle')?'quotient':n==='Free function'?'function':'shifted';$('shift').value=1;$('pout').textContent=1;lens='A';$('la').className='active';$('lb').className='';plotRule()};
+$('promote').onclick=async()=>{if(!await run())return;await run({name:$('name').value.trim(),kind:'promotion',A:last.A,B:last.B,lens:last.lens,anchor:last.anchor,polarity:last.polarity,result:$('rule').value})};
+$('define').onclick=()=>run({name:$('name').value.trim(),kind:'variable',expression:$('expr').value});
+$('download').onclick=async()=>{await run();if(!last)return;const {plots,...record}=last;let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));a.download='ultimodel-record.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
+for(let id of ['A','B','lo','hi','t','params','anchor','step','frequency','magnitudeInput','spinC','spinMode'])$(id).addEventListener('change',()=>run());
+$('samples').ontoggle=()=>run();
+$('colorExample').onclick=()=>{$('frequency').value='2';$('magnitudeInput').value='6';run()};
+$('spinPreset').onclick=()=>{
+ $('A').value='1';$('B').value='1';$('spinC').value='0';$('spinMode').value='reading';
+ $('preset').selectedIndex=-1;$('t').value=0;$('shift').value=1;$('pout').textContent=1;
+ $('rule').value='shifted';lens='A';$('la').className='active';$('lb').className='';plotRule()
+};
+async function setupElements(){
+ try{
+  const response=await fetch('/elements.json');
+  if(!response.ok)throw Error('Element data unavailable.');
+  const {elements}=await response.json();
+  const menu=$('elementSelect'),field=$('elementField');
+  const layout=[
+   'H . . . . . . . . . . . . . . . . He',
+   'Li Be . . . . . . . . . . B C N O F Ne',
+   'Na Mg . . . . . . . . . . Al Si P S Cl Ar',
+   'K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr',
+   'Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe',
+   'Cs Ba . Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn',
+   'Fr Ra . Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og',
+   '. . La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu',
+   '. . Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr'
+  ];
+  const buttons=new Map();
+  layout.forEach((line,r)=>line.split(' ').forEach((symbol,c)=>{
+   if(symbol==='.')return;
+   const row=elements.find(item=>item.symbol===symbol);
+   const button=document.createElement('button');
+   button.textContent=symbol;button.title=row.Z+' · '+row.name;
+   button.style.gridArea=(r+1)+' / '+(c+1);button.style.padding='6px 1px';
+   button.onclick=()=>{menu.value=symbol;refresh();$('to'+$('elementTarget').value).click()};
+   buttons.set(symbol,button);$('elementGrid').append(button);
+  }));
+  for(const row of elements)menu.add(new Option(row.Z+' · '+row.symbol+' · '+row.name,row.symbol));
+  function refresh(){
+   const row=elements[menu.selectedIndex],key=field.value;
+   const value=row[key];
+   for(const item of elements){
+    const cell=buttons.get(item.symbol);
+    cell.disabled=item[key]===null;cell.classList.toggle('active',item.symbol===row.symbol);
+   }
+   $('elementValue').textContent=value===null?'No standard atomic weight listed.':row.name+' · '+value+(key==='Ar'?' ± '+row.uncertainty:'');
+   for(const [button,input] of [['toA','A'],['toB','B']]){
+    $(button).disabled=value===null;
+    $(button).onclick=()=>{$(input).value='element('+row.symbol+', '+key+')';run()};
+   }
+  }
+  menu.onchange=field.onchange=refresh;refresh();
+ }catch(e){$('elementValue').textContent='Could not load the element table.'}
+}
+setupElements();switchLens('A');
+</script></html>

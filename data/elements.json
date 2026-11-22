@@ -1,0 +1,832 @@
+{
+ "source": "https://ciaaw.org/abridged-atomic-weights.htm",
+ "edition": "2024",
+ "elements": [
+  {
+   "Z": 1,
+   "symbol": "H",
+   "name": "hydrogen",
+   "Ar": "1.0080",
+   "uncertainty": "0.0002"
+  },
+  {
+   "Z": 2,
+   "symbol": "He",
+   "name": "helium",
+   "Ar": "4.0026",
+   "uncertainty": "0.0001"
+  },
+  {
+   "Z": 3,
+   "symbol": "Li",
+   "name": "lithium",
+   "Ar": "6.94",
+   "uncertainty": "0.06"
+  },
+  {
+   "Z": 4,
+   "symbol": "Be",
+   "name": "beryllium",
+   "Ar": "9.0122",
+   "uncertainty": "0.0001"
+  },
+  {
+   "Z": 5,
+   "symbol": "B",
+   "name": "boron",
+   "Ar": "10.81",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 6,
+   "symbol": "C",
+   "name": "carbon",
+   "Ar": "12.011",
+   "uncertainty": "0.002"
+  },
+  {
+   "Z": 7,
+   "symbol": "N",
+   "name": "nitrogen",
+   "Ar": "14.007",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 8,
+   "symbol": "O",
+   "name": "oxygen",
+   "Ar": "15.999",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 9,
+   "symbol": "F",
+   "name": "fluorine",
+   "Ar": "18.998",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 10,
+   "symbol": "Ne",
+   "name": "neon",
+   "Ar": "20.180",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 11,
+   "symbol": "Na",
+   "name": "sodium",
+   "Ar": "22.990",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 12,
+   "symbol": "Mg",
+   "name": "magnesium",
+   "Ar": "24.305",
+   "uncertainty": "0.002"
+  },
+  {
+   "Z": 13,
+   "symbol": "Al",
+   "name": "aluminium",
+   "Ar": "26.982",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 14,
+   "symbol": "Si",
+   "name": "silicon",
+   "Ar": "28.085",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 15,
+   "symbol": "P",
+   "name": "phosphorus",
+   "Ar": "30.974",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 16,
+   "symbol": "S",
+   "name": "sulfur",
+   "Ar": "32.06",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 17,
+   "symbol": "Cl",
+   "name": "chlorine",
+   "Ar": "35.45",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 18,
+   "symbol": "Ar",
+   "name": "argon",
+   "Ar": "39.95",
+   "uncertainty": "0.16"
+  },
+  {
+   "Z": 19,
+   "symbol": "K",
+   "name": "potassium",
+   "Ar": "39.098",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 20,
+   "symbol": "Ca",
+   "name": "calcium",
+   "Ar": "40.078",
+   "uncertainty": "0.004"
+  },
+  {
+   "Z": 21,
+   "symbol": "Sc",
+   "name": "scandium",
+   "Ar": "44.956",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 22,
+   "symbol": "Ti",
+   "name": "titanium",
+   "Ar": "47.867",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 23,
+   "symbol": "V",
+   "name": "vanadium",
+   "Ar": "50.942",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 24,
+   "symbol": "Cr",
+   "name": "chromium",
+   "Ar": "51.996",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 25,
+   "symbol": "Mn",
+   "name": "manganese",
+   "Ar": "54.938",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 26,
+   "symbol": "Fe",
+   "name": "iron",
+   "Ar": "55.845",
+   "uncertainty": "0.002"
+  },
+  {
+   "Z": 27,
+   "symbol": "Co",
+   "name": "cobalt",
+   "Ar": "58.933",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 28,
+   "symbol": "Ni",
+   "name": "nickel",
+   "Ar": "58.693",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 29,
+   "symbol": "Cu",
+   "name": "copper",
+   "Ar": "63.546",
+   "uncertainty": "0.003"
+  },
+  {
+   "Z": 30,
+   "symbol": "Zn",
+   "name": "zinc",
+   "Ar": "65.38",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 31,
+   "symbol": "Ga",
+   "name": "gallium",
+   "Ar": "69.723",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 32,
+   "symbol": "Ge",
+   "name": "germanium",
+   "Ar": "72.630",
+   "uncertainty": "0.008"
+  },
+  {
+   "Z": 33,
+   "symbol": "As",
+   "name": "arsenic",
+   "Ar": "74.922",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 34,
+   "symbol": "Se",
+   "name": "selenium",
+   "Ar": "78.971",
+   "uncertainty": "0.008"
+  },
+  {
+   "Z": 35,
+   "symbol": "Br",
+   "name": "bromine",
+   "Ar": "79.904",
+   "uncertainty": "0.003"
+  },
+  {
+   "Z": 36,
+   "symbol": "Kr",
+   "name": "krypton",
+   "Ar": "83.798",
+   "uncertainty": "0.002"
+  },
+  {
+   "Z": 37,
+   "symbol": "Rb",
+   "name": "rubidium",
+   "Ar": "85.468",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 38,
+   "symbol": "Sr",
+   "name": "strontium",
+   "Ar": "87.62",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 39,
+   "symbol": "Y",
+   "name": "yttrium",
+   "Ar": "88.906",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 40,
+   "symbol": "Zr",
+   "name": "zirconium",
+   "Ar": "91.222",
+   "uncertainty": "0.003"
+  },
+  {
+   "Z": 41,
+   "symbol": "Nb",
+   "name": "niobium",
+   "Ar": "92.906",
+   "uncertainty": "0.001"
+  },
+  {
+   "Z": 42,
+   "symbol": "Mo",
+   "name": "molybdenum",
+   "Ar": "95.95",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 43,
+   "symbol": "Tc",
+   "name": "technetium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 44,
+   "symbol": "Ru",
+   "name": "ruthenium",
+   "Ar": "101.07",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 45,
+   "symbol": "Rh",
+   "name": "rhodium",
+   "Ar": "102.91",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 46,
+   "symbol": "Pd",
+   "name": "palladium",
+   "Ar": "106.42",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 47,
+   "symbol": "Ag",
+   "name": "silver",
+   "Ar": "107.87",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 48,
+   "symbol": "Cd",
+   "name": "cadmium",
+   "Ar": "112.41",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 49,
+   "symbol": "In",
+   "name": "indium",
+   "Ar": "114.82",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 50,
+   "symbol": "Sn",
+   "name": "tin",
+   "Ar": "118.71",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 51,
+   "symbol": "Sb",
+   "name": "antimony",
+   "Ar": "121.76",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 52,
+   "symbol": "Te",
+   "name": "tellurium",
+   "Ar": "127.60",
+   "uncertainty": "0.03"
+  },
+  {
+   "Z": 53,
+   "symbol": "I",
+   "name": "iodine",
+   "Ar": "126.90",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 54,
+   "symbol": "Xe",
+   "name": "xenon",
+   "Ar": "131.29",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 55,
+   "symbol": "Cs",
+   "name": "caesium",
+   "Ar": "132.91",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 56,
+   "symbol": "Ba",
+   "name": "barium",
+   "Ar": "137.33",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 57,
+   "symbol": "La",
+   "name": "lanthanum",
+   "Ar": "138.91",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 58,
+   "symbol": "Ce",
+   "name": "cerium",
+   "Ar": "140.12",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 59,
+   "symbol": "Pr",
+   "name": "praseodymium",
+   "Ar": "140.91",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 60,
+   "symbol": "Nd",
+   "name": "neodymium",
+   "Ar": "144.24",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 61,
+   "symbol": "Pm",
+   "name": "promethium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 62,
+   "symbol": "Sm",
+   "name": "samarium",
+   "Ar": "150.36",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 63,
+   "symbol": "Eu",
+   "name": "europium",
+   "Ar": "151.96",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 64,
+   "symbol": "Gd",
+   "name": "gadolinium",
+   "Ar": "157.25",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 65,
+   "symbol": "Tb",
+   "name": "terbium",
+   "Ar": "158.93",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 66,
+   "symbol": "Dy",
+   "name": "dysprosium",
+   "Ar": "162.50",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 67,
+   "symbol": "Ho",
+   "name": "holmium",
+   "Ar": "164.93",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 68,
+   "symbol": "Er",
+   "name": "erbium",
+   "Ar": "167.26",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 69,
+   "symbol": "Tm",
+   "name": "thulium",
+   "Ar": "168.93",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 70,
+   "symbol": "Yb",
+   "name": "ytterbium",
+   "Ar": "173.05",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 71,
+   "symbol": "Lu",
+   "name": "lutetium",
+   "Ar": "174.97",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 72,
+   "symbol": "Hf",
+   "name": "hafnium",
+   "Ar": "178.49",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 73,
+   "symbol": "Ta",
+   "name": "tantalum",
+   "Ar": "180.95",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 74,
+   "symbol": "W",
+   "name": "tungsten",
+   "Ar": "183.84",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 75,
+   "symbol": "Re",
+   "name": "rhenium",
+   "Ar": "186.21",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 76,
+   "symbol": "Os",
+   "name": "osmium",
+   "Ar": "190.23",
+   "uncertainty": "0.03"
+  },
+  {
+   "Z": 77,
+   "symbol": "Ir",
+   "name": "iridium",
+   "Ar": "192.22",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 78,
+   "symbol": "Pt",
+   "name": "platinum",
+   "Ar": "195.08",
+   "uncertainty": "0.02"
+  },
+  {
+   "Z": 79,
+   "symbol": "Au",
+   "name": "gold",
+   "Ar": "196.97",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 80,
+   "symbol": "Hg",
+   "name": "mercury",
+   "Ar": "200.59",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 81,
+   "symbol": "Tl",
+   "name": "thallium",
+   "Ar": "204.38",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 82,
+   "symbol": "Pb",
+   "name": "lead",
+   "Ar": "207.2",
+   "uncertainty": "1.1"
+  },
+  {
+   "Z": 83,
+   "symbol": "Bi",
+   "name": "bismuth",
+   "Ar": "208.98",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 84,
+   "symbol": "Po",
+   "name": "polonium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 85,
+   "symbol": "At",
+   "name": "astatine",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 86,
+   "symbol": "Rn",
+   "name": "radon",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 87,
+   "symbol": "Fr",
+   "name": "francium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 88,
+   "symbol": "Ra",
+   "name": "radium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 89,
+   "symbol": "Ac",
+   "name": "actinium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 90,
+   "symbol": "Th",
+   "name": "thorium",
+   "Ar": "232.04",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 91,
+   "symbol": "Pa",
+   "name": "protactinium",
+   "Ar": "231.04",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 92,
+   "symbol": "U",
+   "name": "uranium",
+   "Ar": "238.03",
+   "uncertainty": "0.01"
+  },
+  {
+   "Z": 93,
+   "symbol": "Np",
+   "name": "neptunium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 94,
+   "symbol": "Pu",
+   "name": "plutonium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 95,
+   "symbol": "Am",
+   "name": "americium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 96,
+   "symbol": "Cm",
+   "name": "curium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 97,
+   "symbol": "Bk",
+   "name": "berkelium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 98,
+   "symbol": "Cf",
+   "name": "californium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 99,
+   "symbol": "Es",
+   "name": "einsteinium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 100,
+   "symbol": "Fm",
+   "name": "fermium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 101,
+   "symbol": "Md",
+   "name": "mendelevium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 102,
+   "symbol": "No",
+   "name": "nobelium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 103,
+   "symbol": "Lr",
+   "name": "lawrencium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 104,
+   "symbol": "Rf",
+   "name": "rutherfordium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 105,
+   "symbol": "Db",
+   "name": "dubnium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 106,
+   "symbol": "Sg",
+   "name": "seaborgium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 107,
+   "symbol": "Bh",
+   "name": "bohrium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 108,
+   "symbol": "Hs",
+   "name": "hassium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 109,
+   "symbol": "Mt",
+   "name": "meitnerium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 110,
+   "symbol": "Ds",
+   "name": "darmstadtium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 111,
+   "symbol": "Rg",
+   "name": "roentgenium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 112,
+   "symbol": "Cn",
+   "name": "copernicium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 113,
+   "symbol": "Nh",
+   "name": "nihonium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 114,
+   "symbol": "Fl",
+   "name": "flerovium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 115,
+   "symbol": "Mc",
+   "name": "moscovium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 116,
+   "symbol": "Lv",
+   "name": "livermorium",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 117,
+   "symbol": "Ts",
+   "name": "tennessine",
+   "Ar": null,
+   "uncertainty": null
+  },
+  {
+   "Z": 118,
+   "symbol": "Og",
+   "name": "oganesson",
+   "Ar": null,
+   "uncertainty": null
+  }
+ ]
+}

@@ -1,0 +1,105 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ultimodel · Token engine</title><style>
+*{box-sizing:border-box}body{margin:auto;max-width:1100px;padding:24px;background:#f2f3ef;color:#193538;font:16px/1.5 system-ui}a{color:#12645d}h1,h2{font-family:Georgia,serif;font-weight:500;margin:8px 0}section,details{background:white;border:1px solid #cad6cf;border-radius:9px;padding:16px;margin:12px 0}label{display:inline-grid;gap:3px;margin:5px}input,select,button,textarea{font:inherit;padding:6px;border:1px solid #91aaa0;border-radius:4px}input{max-width:10em}textarea{display:block;max-width:100%}button{cursor:pointer;background:#e1efea}table{border-collapse:collapse;width:100%}td,th{padding:6px;border-bottom:1px solid #ddd;text-align:left;white-space:nowrap}th{font-size:.85em}.scroll{overflow:auto}svg{width:100%;display:block}summary{cursor:pointer}#status{color:#843a23}[hidden]{display:none!important}
+</style><a href="/">← Calculator / grapher</a> · <a href="/recognition">Recognition</a><h1>Token engine <small>v0.1</small></h1>
+<form id="form"><section><label>Mode<select id="mode"><option value="pair">Compare two states</option><option value="sequence">Sequence</option></select></label>
+<div id="pair"><label>Current state<input id="current" value="101" maxlength="3"></label><label>Next state<input id="next" value="111" maxlength="3"></label> <button type="button" id="append">Append target to sequence</button></div>
+<div id="sequence" hidden><label>States · one per line<textarea id="states" rows="5" placeholder="000&#10;001&#10;101&#10;111"></textarea></label><label>Clock<select id="clock"><option>Automatic</option><option>Manual</option></select></label>
+<label id="manual" hidden>Timestamps · one per line<textarea id="times" rows="4"></textarea></label></div>
+<label id="duration"><span id="durationTitle">Elapsed time Δt</span><input id="elapsed" type="number" step="any" value="1"><input id="tau" type="number" step="any" value="1"></label>
+<label>Unit<select id="unit"><option>tick</option><option>second</option><option>frame</option><option>cycle</option><option>custom</option></select></label>
+<label id="customLabel" hidden>Custom unit<input id="custom"></label></section>
+<details><summary>Lens’ editor</summary><label>Lens name<input id="lensName" value="Neutral"></label><div id="labels"></div></details>
+<button>Calculate</button> <button type="button" id="json">Export JSON</button> <button type="button" id="csv">Export CSV</button></form>
+<p id="status" role="status"></p><div id="result"></div>
+<script>
+const el=id=>document.getElementById(id);
+const make=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n};
+for(const [i,key] of [...'LFM'].entries()){
+ const row=make('div');el('labels').append(row);
+ for(const [field,caption,value] of [['name',key+' quality',['Location','Function','Magnitude'][i]],['zero','Bit 0','0'],['one','Bit 1','1']]){
+  const label=make('label',caption),input=make('input');input.id=key+field;input.value=value;label.append(input);row.append(label);
+ }
+}
+function read(){
+ const seq=el('mode').value==='sequence',manual=seq&&el('clock').value==='Manual';
+ el('pair').hidden=seq;el('sequence').hidden=!seq;el('manual').hidden=!manual;el('duration').hidden=manual;
+ el('elapsed').hidden=seq;el('tau').hidden=!seq;
+ el('durationTitle').textContent=seq?'Tick duration τ':'Elapsed time Δt';el('customLabel').hidden=el('unit').value!=='custom';
+ const lines=id=>el(id).value.trim().split(/\r?\n/).map(s=>s.trim());
+ const lens={name:el('lensName').value};
+ for(const k of 'LFM')lens[k]=Object.fromEntries(['name','zero','one'].map(f=>[f,el(k+f).value]));
+ return {states:seq?lines('states'):[el('current').value.trim(),el('next').value.trim()],tau:el(seq?'tau':'elapsed').value,
+ timestamps:manual?lines('times'):null,unit:el('unit').value==='custom'?el('custom').value:el('unit').value,lens};
+}
+const columns={timestamp:'Start',target_timestamp:'End',source_state:'Current',target_state:'Next',transition:'Transition · XOR',inverse_source:'Inverse current',inverse_target:'Inverse next',hamming_distance:'Magnitude · Hamming distance',change_ratio:'Changed : unchanged',delta_t:'Δt',flow:'Flow’ · state-change rate'};
+function table(host,headers,rows){
+ const wrap=make('div'),t=make('table'),head=t.createTHead().insertRow(),body=t.createTBody();wrap.className='scroll';wrap.append(t);host.append(wrap);
+ headers.forEach(h=>head.append(make('th',h)));rows.forEach(row=>{const tr=body.insertRow();row.forEach(v=>tr.insertCell().textContent=v)});
+}
+function graph(host,points,title,max,first,last){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 700 78');svg.setAttribute('role','img');svg.setAttribute('aria-label',title);
+ function add(tag,attrs,txt){const n=document.createElementNS(svg.namespaceURI,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(txt!==undefined)n.textContent=txt;svg.append(n)}
+ const x=t=>52+(last===first?0:(t-first)/(last-first))*625,y=v=>48-34*(v/max);
+ host.append(make('strong',title),svg);
+ add('path',{d:'M52 13 V48 H677',fill:'none',stroke:'#a2b6ae'});
+ add('text',{x:0,y:18,'font-size':12},Number(max.toPrecision(4)));add('text',{x:8,y:49,'font-size':12},0);
+ add('text',{x:52,y:69,'font-size':12},first);if(last!==first)add('text',{x:677,y:69,'text-anchor':'end','font-size':12},last);
+ let d='';points.forEach(([t,v],i)=>{d+=(i?' H'+x(t)+' V':'M'+x(t)+' ')+y(v)});
+ add('path',{d,fill:'none',stroke:'#187768','stroke-width':2});
+ if(points.length){const [t,v]=points[points.length-1];add('circle',{cx:x(t),cy:y(v),r:3,fill:'#187768'})}
+}
+function render(data){
+ const host=el('result');host.replaceChildren();const block=title=>{const s=make('section');s.append(make('h2',title));host.append(s);return s};
+ const hist=block('State history'),keys=[...'LFM'],h=data.history,r=data.rows;
+ table(hist,['Time · '+data.time_unit,'State',...keys.map(k=>k+' · '+data.lens[k].name)],h.map(p=>[p.timestamp,p.state,...p.interpretation]));
+ const transitions=block('Transitions');transitions.append(make('p','Polarity / bitwise complement flips all three bits. Flow’ is measured in changes per '+data.time_unit+'.'));
+ table(transitions,Object.values(columns),r.map(row=>Object.keys(columns).map(k=>row[k])));
+ const plots=block('Through time · '+data.time_unit),start=h[0].timestamp,end=h[h.length-1].timestamp;
+ keys.forEach((k,i)=>graph(plots,h.map(p=>[p.timestamp,Number(p.state[i])]),k+' · '+data.lens[k].name,1,start,end));
+ if(r.length)for(const [field,max] of [['hamming_distance',3],['flow',Math.max(...r.map(v=>v.flow))||1]]){
+  const pts=r.map(v=>[v.timestamp,v[field]]);pts.push([end,pts[pts.length-1][1]]);graph(plots,pts,columns[field],max,start,end);
+ }
+}
+let version=0;
+function appendPayload(pair, statesText, timesText, clock, tick){
+ const lines=text=>text.trim().split(/\r?\n/).map(value=>value.trim());
+ const [source,target]=pair.states;
+ const states=statesText.trim()?lines(statesText):[source];
+ if(states.at(-1)!==source)throw Error('Sequence ends at '+states.at(-1)+'. Set Current state to that token to continue.');
+ let times;
+ if(clock==='Manual' && (statesText.trim() || timesText.trim())){
+  times=lines(timesText);
+  if(times.length!==states.length || times.some(value=>!value || !Number.isFinite(Number(value))))
+   throw Error('Supply one finite timestamp per existing state.');
+  times=times.map(Number);
+ }else{
+  if(states.length>1 && !(Number(tick)>0))throw Error('Set a positive sequence tick duration.');
+  times=states.map((_,i)=>i===0?0:i*Number(tick));
+ }
+ const dt=Number(pair.tau);
+ if(!Number.isFinite(dt)||dt<=0)throw Error('Elapsed time must be positive and finite.');
+ return {...pair,states:[...states,target],timestamps:[...times,times.at(-1)+dt]};
+}
+async function run(format,append=false){
+ const id=++version;let payload=read();el('status').textContent='';
+ try{
+  if(append)payload=appendPayload(payload,el('states').value,el('times').value,el('clock').value,el('tau').value);
+  const response=await fetch('/api/tokens'+(format==='csv'?'.csv':''),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  if(!response.ok)throw Error((await response.json()).error);
+  const content=await response.text();if(id!==version)return;
+  if(format){const a=make('a');a.href=URL.createObjectURL(new Blob([content],{type:response.headers.get('Content-Type')}));a.download='ultimodel-tokens.'+format;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+  if(append){
+   el('states').value=payload.states.join('\n');el('times').value=payload.timestamps.join('\n');
+   el('clock').value='Manual';el('mode').value='sequence';el('current').value=payload.states.at(-1);
+   el('next').value='';read();el('status').textContent='Recorded '+payload.states.at(-1)+' at '+payload.timestamps.at(-1)+' '+payload.unit+'.';
+  }
+  if(format!=='csv')render(JSON.parse(content));
+ }catch(e){if(id===version){el('result').replaceChildren();el('status').textContent=e.message}}
+}
+el('form').onsubmit=e=>{e.preventDefault();run()};el('form').onchange=()=>run();
+el('form').oninput=()=>{version++;el('result').replaceChildren();el('status').textContent='Calculate to refresh.'};
+el('append').onclick=()=>run(null,true);
+el('json').onclick=()=>run('json');el('csv').onclick=()=>run('csv');run();
+</script></html>
