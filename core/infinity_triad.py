@@ -118,6 +118,23 @@ def _cardinals(left, right):
     }
 
 
+
+def _trajectories():
+    """Exact sample of three reference paths and a sign-alternating divergence."""
+    samples = []
+    for n in range(1, 9):
+        samples.append({"n": n, "negative": -n, "middle": 0, "positive": n,
+                        "alternating": (-1) ** n * n, "alternating_magnitude": n})
+    return {
+        "samples": samples,
+        "proven_limits": {"negative": "-infinity", "middle": "0",
+                          "positive": "+infinity", "alternating": "no extended-real limit",
+                          "alternating_magnitude": "+infinity"},
+        "proof_outline": "Even n give +n toward +infinity; odd n give -n toward -infinity. "
+                         "Thus (-1)^n*n has no extended-real limit, while its absolute value equals n "
+                         "and tends to +infinity. Finite samples illustrate, but do not establish, this proof.",
+    }
+
 def investigate(payload):
     """Compute three-point far and near probes plus separate set-cardinality evidence."""
     if not isinstance(payload, dict):
@@ -135,6 +152,7 @@ def investigate(payload):
         "radius": _str(radius),
         "far": _sweep(operation, radius),
         "near_zero": _sweep(operation, near),
+        "trajectories": _trajectories(),
         "limits": {
             "as_x_to_negative_infinity": asym[0], "at_zero": asym[1],
             "as_x_to_positive_infinity": asym[2],
