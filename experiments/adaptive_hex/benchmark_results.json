@@ -1,0 +1,124 @@
+{
+  "description": "Full, counted archive sizes; synthetic controls seeded 20261123",
+  "video_original_sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+  "tests": [
+    {
+      "case": "original_mp4_adaptive",
+      "source_bytes": 33028976,
+      "archive_bytes": 32514744,
+      "saved_percent": 1.5569,
+      "sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+      "blocks": 32,
+      "block_size": 1048576,
+      "brotli_quality": 5,
+      "selection_counts": {
+        "raw/brotli": 4,
+        "raw/zlib": 27,
+        "raw/store": 1
+      },
+      "verified": false,
+      "encode_seconds": 4.748,
+      "decode_seconds": 0.185,
+      "byte_exact_verified": true,
+      "sha_match_verified": true
+    },
+    {
+      "case": "original_mp4_brotli5",
+      "source_bytes": 33028976,
+      "archive_bytes": 32598832,
+      "saved_percent": 1.3023,
+      "byte_exact_verified": true,
+      "note": "bare compressor payload; no format header"
+    },
+    {
+      "case": "original_mp4_brotli9",
+      "source_bytes": 33028976,
+      "archive_bytes": 32493332,
+      "saved_percent": 1.6217,
+      "byte_exact_verified": true,
+      "note": "bare compressor payload; no format header"
+    },
+    {
+      "case": "original_mp4_zlib6",
+      "source_bytes": 33028976,
+      "archive_bytes": 32526027,
+      "saved_percent": 1.5228,
+      "byte_exact_verified": true,
+      "note": "bare compressor payload; no format header"
+    },
+    {
+      "case": "control_random",
+      "source_bytes": 3145728,
+      "archive_bytes": 3145911,
+      "saved_percent": -0.0058,
+      "sha256": "21b80d9f6512cd1ad4a27d28663f48be4aed7a077ff1f5b59cc8de59b3a372bb",
+      "blocks": 3,
+      "block_size": 1048576,
+      "brotli_quality": 5,
+      "selection_counts": {
+        "raw/store": 3
+      },
+      "verified": false,
+      "encode_seconds": 0.394,
+      "decode_seconds": 0.005,
+      "byte_exact_verified": true,
+      "sha_match_verified": true
+    },
+    {
+      "case": "control_repetitive",
+      "source_bytes": 3145728,
+      "archive_bytes": 384,
+      "saved_percent": 99.9878,
+      "sha256": "59aca6e07f7e685b56f20fed52f9c575558dab2ab8419fd01e9d3288291a3e78",
+      "blocks": 3,
+      "block_size": 1048576,
+      "brotli_quality": 5,
+      "selection_counts": {
+        "raw/brotli": 3
+      },
+      "verified": false,
+      "encode_seconds": 0.088,
+      "decode_seconds": 0.007,
+      "byte_exact_verified": true,
+      "sha_match_verified": true
+    },
+    {
+      "case": "control_six_plus_two",
+      "source_bytes": 3145728,
+      "archive_bytes": 2359557,
+      "saved_percent": 24.9917,
+      "sha256": "7b168973493f8a4a197c685c6f577aea651a9e101e47189d4a3b0cc9dcb476b5",
+      "blocks": 3,
+      "block_size": 1048576,
+      "brotli_quality": 5,
+      "selection_counts": {
+        "hex6+2/brotli": 3
+      },
+      "verified": false,
+      "encode_seconds": 0.631,
+      "decode_seconds": 0.028,
+      "byte_exact_verified": true,
+      "sha_match_verified": true
+    },
+    {
+      "case": "control_mixed",
+      "source_bytes": 3145728,
+      "archive_bytes": 1835232,
+      "saved_percent": 41.6595,
+      "sha256": "a10891b99c50521d9d38c1d4e084fd083156984390dcf9366347e6b1817feaec",
+      "blocks": 3,
+      "block_size": 1048576,
+      "brotli_quality": 5,
+      "selection_counts": {
+        "raw/store": 1,
+        "hex6+2/brotli": 1,
+        "raw/brotli": 1
+      },
+      "verified": false,
+      "encode_seconds": 0.357,
+      "decode_seconds": 0.017,
+      "byte_exact_verified": true,
+      "sha_match_verified": true
+    }
+  ]
+}
