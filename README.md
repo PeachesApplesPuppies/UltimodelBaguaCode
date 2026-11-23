@@ -89,12 +89,12 @@ The local journal persists across restarts in ~/.bce-ultimodel/recognitions.sqli
 
 ## Both Sides + Middle — three-lens infinity inspector
 
-Open **[Both Sides + Middle](/triad)** from the local calculator navigation (or visit \`http://127.0.0.1:8765/triad\`). The locally served page evaluates one supported transformation at three positions **−R, 0, +R**, and also at **−1/R, 0, +1/R** to inspect the two approaches to the middle. It displays exact rational values, signs, absolute magnitudes, the value at zero (or its undefined status), and whether the two wings merge.
+Open **Both Sides + Middle** from the local calculator navigation (or visit `http://127.0.0.1:8765/triad`). The locally served page evaluates one supported transformation at three positions **−R, 0, +R**, and also at **−1/R, 0, +1/R** to inspect the two approaches to the middle. It displays exact rational values, signs, absolute magnitudes, the value at zero (or its undefined status), and whether the two wings merge.
 
-Supported transformations are identity, negation, absolute value, square, reciprocal and sign. The endpoint \`POST /api/triad\` takes a JSON object such as \`{"operation":"absolute","radius":"10","cardinal_left":"N","cardinal_right":"R"}\` and returns JSON. Radius must be greater than 1 and at most one million. The limit labels for these six functions are established mathematical results **not extrapolations inferred from finite samples**.
+Supported transformations are identity, negation, absolute value, square, reciprocal and sign. The endpoint `POST /api/triad` takes a JSON object such as `{"operation":"absolute","radius":"10","cardinal_left":"N","cardinal_right":"R"}` and returns JSON. Radius must be greater than 1 and at most one million. The limit labels for these six functions are established mathematical results **not extrapolations inferred from finite samples**.
 
 Cardinal comparisons are kept **separate** from signed scalar limits. They support N (naturals), Z (integers), Q (rationals), R (reals), P(N) (power set of naturals), and P(R) (power set of reals), using known cardinality equalities and inequalities. Cardinality has no negative polarity. Infinity minus infinity is not valid as ordinary scalar subtraction.
 
-The tool records no user data. Its three simultaneous probes are a mathematical investigation interface, not a scientific proof of universal resonance. Run \`python -m unittest discover -s tests -v\` to execute its regression tests.
+The tool records no user data. Its three simultaneous probes are a mathematical investigation interface, not a scientific proof of universal resonance. Run `python -m unittest discover -s tests -v` to execute its regression tests.
 
 The inspector also displays simultaneous paths −n, 0, +n and the alternating sequence (−1)^n n. The alternating sequence has no extended-real limit even though its absolute magnitude grows like n toward +∞; the proof uses odd/even subsequences, not finite-plot extrapolation.
