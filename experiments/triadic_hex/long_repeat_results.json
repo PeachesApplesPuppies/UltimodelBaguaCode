@@ -1,0 +1,18 @@
+{
+  "case": "three identical 6MiB pseudorandom blocks",
+  "input_bytes": 18874368,
+  "whole_file_brotli5_bytes": 18874405,
+  "triadic_depth1_bytes": 6291614,
+  "triadic_depth1_saved_pct": 66.6658,
+  "whole_file_brotli5_saved_pct": -0.0002,
+  "selections": {
+    "raw/store": 1,
+    "deduplicated_leaves": 2
+  },
+  "node_count": 2,
+  "leaf_count": 1,
+  "encode_seconds": 0.918,
+  "brotli_seconds": 0.187,
+  "roundtrip_byte_exact": true,
+  "sha256": "d7f237d99df8ad21edad4f2dbaa353d1316e713ef31c8775b361b5f7a05a3b21"
+}
