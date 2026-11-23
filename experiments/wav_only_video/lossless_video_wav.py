@@ -43,6 +43,8 @@ def sha256(path: Path) -> bytes:
 
 
 def encode(source: Path, dst: Path) -> dict:
+    if source.resolve() == dst.resolve():
+        raise ValueError('Input and output paths must differ')
     src_size = source.stat().st_size
     if src_size >= (1 << 64):
         raise ValueError('Source too large')
@@ -62,6 +64,8 @@ def encode(source: Path, dst: Path) -> dict:
 
 def decode(wavpath: Path, dst: Path) -> dict:
     """Read only the WAV: no original source path required or accessed."""
+    if wavpath.resolve() == dst.resolve():
+        raise ValueError('Input and output paths must differ')
     dst.parent.mkdir(parents=True, exist_ok=True)
     with wave.open(str(wavpath), 'rb') as wav:
         if (wav.getnchannels(), wav.getsampwidth(), wav.getframerate(), wav.getcomptype()) != (1, 2, SAMPLE_RATE, 'NONE'):
