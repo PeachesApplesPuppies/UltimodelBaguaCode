@@ -103,6 +103,16 @@ class TriadTests(unittest.TestCase):
         self.assertNotIn("infinity", result["far"]["right"]["output"])
         self.assertIn("Finite probes do not prove", result["interpretation_boundary"])
 
+    def test_simultaneous_trajectories(self):
+        t = self.probe()["trajectories"]
+        self.assertEqual(len(t["samples"]), 8)
+        self.assertEqual(t["samples"][0], {"n": 1, "negative": -1, "middle": 0,
+                                          "positive": 1, "alternating": -1,
+                                          "alternating_magnitude": 1})
+        self.assertEqual(t["samples"][7]["alternating"], 8)
+        self.assertEqual(t["proven_limits"]["alternating"], "no extended-real limit")
+        self.assertEqual(t["proven_limits"]["alternating_magnitude"], "+infinity")
+
     def test_all_limit_tables_complete(self):
         keys = {"as_x_to_negative_infinity", "at_zero", "as_x_to_positive_infinity",
                 "as_x_to_zero_from_negative", "as_x_to_zero_from_positive"}
