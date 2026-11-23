@@ -1,0 +1,22 @@
+name: Triadic HEX regression
+on:
+  pull_request:
+    paths:
+      - "experiments/triadic_hex/**"
+      - ".github/workflows/triadic-hex-tests.yml"
+  push:
+    paths:
+      - "experiments/triadic_hex/**"
+      - ".github/workflows/triadic-hex-tests.yml"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install -r experiments/triadic_hex/requirements.txt
+      - name: Run Triadic and AutoDepth regressions
+        run: python -m unittest discover -s experiments/triadic_hex -p "test_*.py" -v
