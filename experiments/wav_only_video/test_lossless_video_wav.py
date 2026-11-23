@@ -118,6 +118,17 @@ class LosslessVideoWavTests(unittest.TestCase):
             wf.setnchannels(2);wf.setsampwidth(2);wf.setframerate(SAMPLE_RATE)
             wf.writeframes(b'\x00\x00'*100)
         with self.assertRaisesRegex(ValueError,'Not a supported'):decode(w,out)
+    def test_refuse_to_overwrite_own_source(self):
+        p=self.root/'one.mp4'
+        p.write_bytes(b'original')
+        with self.assertRaisesRegex(ValueError, 'must differ'): encode(p,p)
+        self.assertEqual(p.read_bytes(),b'original')
+        w=self.root/'data.wav'
+        encode(p,w)
+        before=w.read_bytes()
+        with self.assertRaisesRegex(ValueError, 'must differ'): decode(w,w)
+        self.assertEqual(w.read_bytes(),before)
+
     def test_byte_pcm_mapping_exhaustive(self):
         binary=bytes(range(256))
         self.assertEqual(from_pcm16(to_pcm16(binary)),binary)
