@@ -7,6 +7,8 @@ loopback HTTP byte ranges; `live_player.py` owns and stops a child player;
 `breakable_runner.py` can supervise any **child command it launches** and
 terminate its process group if it is not responding.
 
+> **EMERGENCY STOP / IMMEDIATE CLOSE:** Press **Ctrl+C** in the running terminal. For a stream or supervised task, use the **separate-terminal, token-protected BREAK command** printed at startup. BREAK is a stop request, not a hard real-time guarantee. See [STOP_AND_RECOVER.md](STOP_AND_RECOVER.md) for copy-and-paste commands, fallback steps, and restoring the last known-good state.
+
 ## Install
 
 Python 3.10+ required. System FFmpeg/FFplay is optional (needed only for
@@ -171,3 +173,76 @@ terminate unrelated user processes.
 
 These changes do not alter the existing `.ut3` file format and are intended to
 be reviewed separately from the earlier Triadic HEX and AutoDepth PRs.
+
+## First-time download guide: run, stop, and recover
+
+**Important: v0.4 currently lives on the `feature/live-closed-state-v0.4` branch / [PR #7](https://github.com/PeachesApplesPuppies/UltimodelBaguaCode/pull/7), not necessarily the default `main` branch.** To download this specific version using Git:
+
+```bash
+git clone --branch feature/live-closed-state-v0.4 https://github.com/PeachesApplesPuppies/UltimodelBaguaCode.git
+cd UltimodelBaguaCode/experiments/triadic_hex
+python -m pip install -r requirements.txt
+python build_zipapp.py
+```
+
+Alternatively, select that branch on GitHub, choose **Code → Download ZIP**, extract it, then open a terminal in `experiments/triadic_hex`. Use `python` or your platform's equivalent (for example, `py` on Windows). Building the `.pyz` requires Python; the archive does **not** include Python, Brotli, or NumPy.
+
+**Basic archive lifecycle** (the encode and decode commands automatically create closed-state checkpoints for their output files):
+
+```bash
+python AutoDepthLive_v0.4.pyz plan input.mp4 --max-depth 4
+python AutoDepthLive_v0.4.pyz encode input.mp4 input.ut3 --max-depth 4
+python AutoDepthLive_v0.4.pyz verify input.ut3
+python AutoDepthLive_v0.4.pyz decode input.ut3 recovered.mp4
+```
+
+**Playback without extracting the full MP4:**
+
+```bash
+python AutoDepthLive_v0.4.pyz play input.ut3 --port 8766
+```
+
+`play` requires FFplay on your PATH. For an external HTTP-range-capable player, use `serve` instead and open the printed `http://127.0.0.1:PORT/video.mp4` URL. If port 8766 is occupied, use `--port 0` and copy the actual port printed on startup.
+
+### STOP NOW: three controls
+
+1. **Terminal A still accessible?** Press **Ctrl+C** in that same terminal. The first signal requests cooperative cancellation; a second signal forces Python interruption. Allow rollback/recovery to finish if possible.
+2. **Streaming or playback running, but Terminal A is blocked?** Open Terminal B and run the following with the *actual* port and session token printed by Terminal A:
+
+   ```bash
+   python AutoDepthLive_v0.4.pyz break --port 8766 --token YOUR_PRINTED_TOKEN
+   ```
+
+   This requests that the HTTP stream stop and, for `play`, that the supervised FFplay process close. An acknowledgement means the **request was accepted**, not proof every process has already exited.
+3. **A supervised compressor or other child command is stuck?** Start external work under the independent runner, then send its own BREAK from Terminal B:
+
+   ```bash
+   # Terminal A — example external writer; only declared outputs can be rolled back
+   python AutoDepthLive_v0.4.pyz runner run --port 8777 --protect output.bin -- python writer.py output.bin
+
+   # Terminal B — use the token printed by this runner session
+   python AutoDepthLive_v0.4.pyz runner break --port 8777 --token YOUR_PRINTED_TOKEN
+   ```
+
+   The runner first requests termination and then escalates to force termination when necessary. **On Windows, cleanup of a child program's own descendants has not been fully validated.**
+
+**Do not wrap the bundled `encode` or `decode` command in a second `runner --protect` for the *same output*:** the bundled command already uses the closed-state lock/checkpoint, and double-protecting the same file can block on that lock. If you want an externally stoppable native compression job, run the built-in encoder as the runner's child **without** an extra `--protect`; the built-in checkpoint will recover on its next invocation after a forced kill:
+
+```bash
+python AutoDepthLive_v0.4.pyz runner run --port 8777 -- python AutoDepthLive_v0.4.pyz encode input.mp4 output.ut3 --max-depth 4
+```
+
+### After an unexpected stop
+
+First **confirm the previous writer/child has exited**. Never restore a file while a surviving writer can overwrite it again. Then:
+
+```bash
+python AutoDepthLive_v0.4.pyz checkpoint status --output output.ut3
+python AutoDepthLive_v0.4.pyz checkpoint recover --output output.ut3
+```
+
+Recovery rolls back only a **pending** incomplete operation, using the verified pre-run snapshot. A previously completed `closed` state is not undone by the `recover` command. When a protected output did not exist before the interrupted operation, rollback removes that unfinished output. If you used `runner --state-dir SOME_DIRECTORY`, supply the **same** `--state-dir` when inspecting/recovering and repeat `--output` for each originally protected output.
+
+Do not delete the adjacent `.ultimodel-closed-<id>/` directory or its blobs while you might need recovery. The checkpoint system protects declared local output files—not other files, external services, program RAM, or physical power failures. A corrupt/missing snapshot results in a refusal rather than an invented restoration. Read-only streaming does not modify the archive and therefore does not require a checkpoint.
+
+For source-script equivalents, troubleshooting, and recovery caveats, see **[STOP_AND_RECOVER.md](STOP_AND_RECOVER.md)**.
