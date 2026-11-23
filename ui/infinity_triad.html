@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three-Lens Infinity · Ultimodel’</title>
+<style>
+:root{color-scheme:light;--ink:#1c3534;--forest:#185b52;--edge:#c6d4ce;--paper:#f2f4ef}
+*{box-sizing:border-box}body{max-width:1100px;margin:0 auto;padding:20px;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+h1,h2{font-family:Georgia,serif;font-weight:500}h1{margin:.25em 0}section{border:1px solid var(--edge);border-radius:10px;background:white;margin:14px 0;padding:18px}
+label{display:block;font-weight:600}input,select,button{font:inherit;border:1px solid #8baba0;border-radius:5px;padding:8px;max-width:100%}input,select{width:100%}button{cursor:pointer;background:var(--forest);color:white;padding:9px 20px}
+a{color:var(--forest)}.fields{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:14px}.hint{color:#4b6763;font-size:14px}
+.table{overflow-x:auto}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{text-align:left;border-bottom:1px solid #dde8e2;padding:9px}th{background:#e8f2ec}code{font-size:14px}#error{color:#8b2919}dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}dl div{background:#eff4f1;padding:12px;border-radius:6px}dt{font-size:13px;color:#4b6763}dd{margin:2px 0;font-weight:600}#families{white-space:pre-line}
+@media(max-width:720px){.fields{grid-template-columns:1fr 1fr}dl{grid-template-columns:1fr}body{padding:12px}}@media(max-width:440px){.fields{grid-template-columns:1fr}}
+</style></head>
+<body>
+<nav><a href="/">← Calculator</a> · <a href="/recognition">Recognition</a> · <a href="/tokens">Tokens</a></nav>
+<h1>Both Sides + Middle</h1>
+<p>Inspect −R, 0 and +R <strong>at once</strong>, and the corresponding approaches toward zero. The set-size comparison is a separate mathematical lens.</p>
+<section>
+<div class="fields">
+<label>Transformation<select id="op"><option value="absolute">Absolute value |x|</option><option value="identity">Identity x</option><option value="negate">Negation −x</option><option value="square">Square x²</option><option value="reciprocal">Reciprocal 1/x</option><option value="sign">Sign sgn(x)</option></select></label>
+<label>Distance R (greater than 1)<input id="radius" value="10" inputmode="decimal"></label>
+<label>Set A<select id="setA"></select></label><label>Set B<select id="setB"></select></label>
+</div>
+<p class="hint">Use a radius like 10, 2.5 or 5/2. The finite probes at ±R and ±1/R are exact rational calculations, not proofs about infinity.</p>
+<button id="run">Investigate all three</button> <span id="status" role="status"></span><p id="error" role="alert"></p>
+</section>
+<section><h2>Far wings: −R · 0 · +R</h2><div id="far" class="table"></div><p id="farNote" class="hint"></p></section>
+<section><h2>Near the middle: −1/R · 0 · +1/R</h2><div id="near" class="table"></div><p id="nearNote" class="hint"></p></section>
+<section><h2>Limits and information</h2><dl id="limits"></dl><dl id="info"></dl></section>
+<section><h2>Cardinality: a different kind of magnitude</h2><div id="cardinal"></div><p class="hint">A cardinality counts the size of a set. Unlike a signed real number, it does not have positive and negative wings. Its vertical position here is a comparison of known sizes, not a coordinate on the real line.</p></section>
+<section><h2>Where the analogy stops</h2><p id="boundary" class="hint"></p></section>
+<script>
+const $=id=>document.getElementById(id);
+for(const name of ['N','Z','Q','R','P(N)','P(R)']){for(const id of ['setA','setB'])$(id).add(new Option(name,name));}
+$('setA').value='N';$('setB').value='R';
+function table(host,sweep){
+ const t=document.createElement('table');const head=document.createElement('thead');const hr=document.createElement('tr');
+ for(const name of ['Lens','Input','Output','Polarity','Magnitude']){const th=document.createElement('th');th.textContent=name;hr.append(th);}head.append(hr);t.append(head);
+ const body=document.createElement('tbody');
+ for(const [key,label] of [['left','Negative'],['middle','Middle (zero)'],['right','Positive']]){
+  const p=sweep[key],tr=document.createElement('tr');
+  for(const value of [label,p.input,p.defined?p.output:'undefined',p.defined?p.polarity:'—',p.defined?p.magnitude:'—']){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}body.append(tr);
+ }
+ t.append(body);$(host).replaceChildren(t);
+}
+function infoGrid(host,data){const dl=$(host);dl.replaceChildren();for(const [label,value] of Object.entries(data)){
+ const div=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label.replaceAll('_',' ');dd.textContent=String(value);div.append(dt,dd);dl.append(div);
+}}
+async function run(){ $('run').disabled=true;$('error').textContent='';$('status').textContent='Calculating…';
+ try{const res=await fetch('/api/triad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operation:$('op').value,radius:$('radius').value,cardinal_left:$('setA').value,cardinal_right:$('setB').value})});
+ const data=await res.json();if(!res.ok)throw Error(data.error||'Invalid input');
+ table('far',data.far);table('near',data.near_zero);
+ $('farNote').textContent=data.far.wing_outputs_equal?'The two wings produce the same output: side information was merged at this distance.':'The wings produce different outputs at this distance.';
+ $('nearNote').textContent=data.near_zero.middle.defined?'The middle is defined for this transformation.':'The middle is undefined: do not infer a middle value from either approach.';
+ infoGrid('limits',data.limits);infoGrid('info',data.information);
+ $('cardinal').textContent=data.cardinality.left.set+' ('+data.cardinality.left.cardinality+') '+data.cardinality.relation+' '+data.cardinality.right.set+' ('+data.cardinality.right.cardinality+'). '+data.cardinality.why;
+ $('boundary').textContent=data.interpretation_boundary+' '+data.cardinality.boundary;
+ $('status').textContent='Three-lens investigation complete.';
+ }catch(e){$('error').textContent=e.message;$('status').textContent='';}finally{$('run').disabled=false;}}
+$('run').addEventListener('click',run);run();
+</script></body></html>
