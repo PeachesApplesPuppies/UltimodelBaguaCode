@@ -1,0 +1,273 @@
+{
+  "source_bytes": 33028976,
+  "archive_bytes": 32513441,
+  "saved_percent": 1.5609,
+  "max_depth": 4,
+  "chosen_depth": 4,
+  "min_leaf": 131072,
+  "boundary_mode": "balanced",
+  "evaluated_regions": 121,
+  "expanded_regions": 40,
+  "max_split_explorations": 1000,
+  "logical_leaves_by_depth": {
+    "1": 1,
+    "2": 3,
+    "3": 6,
+    "4": 9
+  },
+  "branch_trace": [
+    {
+      "address": "root",
+      "depth": 0,
+      "offset": 0,
+      "bytes": 33028976,
+      "action": "split_three"
+    },
+    {
+      "address": "root.0",
+      "depth": 1,
+      "offset": 0,
+      "bytes": 11009659,
+      "action": "split_three"
+    },
+    {
+      "address": "root.0.0",
+      "depth": 2,
+      "offset": 0,
+      "bytes": 3669887,
+      "action": "split_three"
+    },
+    {
+      "address": "root.0.0.0",
+      "depth": 3,
+      "offset": 0,
+      "bytes": 1223296,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "brotli"
+    },
+    {
+      "address": "root.0.0.1",
+      "depth": 3,
+      "offset": 1223296,
+      "bytes": 1223296,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.0.0.2",
+      "depth": 3,
+      "offset": 2446592,
+      "bytes": 1223295,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "brotli"
+    },
+    {
+      "address": "root.0.1",
+      "depth": 2,
+      "offset": 3669887,
+      "bytes": 3669886,
+      "action": "split_three"
+    },
+    {
+      "address": "root.0.1.0",
+      "depth": 3,
+      "offset": 3669887,
+      "bytes": 1223296,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "store"
+    },
+    {
+      "address": "root.0.1.1",
+      "depth": 3,
+      "offset": 4893183,
+      "bytes": 1223295,
+      "action": "split_three"
+    },
+    {
+      "address": "root.0.1.1.0",
+      "depth": 4,
+      "offset": 4893183,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "store"
+    },
+    {
+      "address": "root.0.1.1.1",
+      "depth": 4,
+      "offset": 5300948,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.0.1.1.2",
+      "depth": 4,
+      "offset": 5708713,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "store"
+    },
+    {
+      "address": "root.0.1.2",
+      "depth": 3,
+      "offset": 6116478,
+      "bytes": 1223295,
+      "action": "split_three"
+    },
+    {
+      "address": "root.0.1.2.0",
+      "depth": 4,
+      "offset": 6116478,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "store"
+    },
+    {
+      "address": "root.0.1.2.1",
+      "depth": 4,
+      "offset": 6524243,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.0.1.2.2",
+      "depth": 4,
+      "offset": 6932008,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "store"
+    },
+    {
+      "address": "root.0.2",
+      "depth": 2,
+      "offset": 7339773,
+      "bytes": 3669886,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.1",
+      "depth": 1,
+      "offset": 11009659,
+      "bytes": 11009659,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.2",
+      "depth": 1,
+      "offset": 22019318,
+      "bytes": 11009658,
+      "action": "split_three"
+    },
+    {
+      "address": "root.2.0",
+      "depth": 2,
+      "offset": 22019318,
+      "bytes": 3669886,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.2.1",
+      "depth": 2,
+      "offset": 25689204,
+      "bytes": 3669886,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.2.2",
+      "depth": 2,
+      "offset": 29359090,
+      "bytes": 3669886,
+      "action": "split_three"
+    },
+    {
+      "address": "root.2.2.0",
+      "depth": 3,
+      "offset": 29359090,
+      "bytes": 1223296,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.2.2.1",
+      "depth": 3,
+      "offset": 30582386,
+      "bytes": 1223295,
+      "action": "split_three"
+    },
+    {
+      "address": "root.2.2.1.0",
+      "depth": 4,
+      "offset": 30582386,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "store"
+    },
+    {
+      "address": "root.2.2.1.1",
+      "depth": 4,
+      "offset": 30990151,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.2.2.1.2",
+      "depth": 4,
+      "offset": 31397916,
+      "bytes": 407765,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "zlib"
+    },
+    {
+      "address": "root.2.2.2",
+      "depth": 3,
+      "offset": 31805681,
+      "bytes": 1223295,
+      "action": "store_leaf",
+      "transform": "raw",
+      "compressor": "brotli"
+    }
+  ],
+  "branch_trace_truncated": false,
+  "node_count": 28,
+  "leaf_count": 19,
+  "branch_count": 9,
+  "planning_events": {
+    "leaf_choice:raw/zlib": 96,
+    "leaf_choice:raw/brotli": 9,
+    "leaf_choice:raw/store": 16,
+    "leaf_wins": 30,
+    "branch_wins": 10
+  },
+  "successful_split_modes": {
+    "balanced": 10
+  },
+  "sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+  "verified": false,
+  "encode_seconds": 23.135,
+  "verified_decoded_sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+  "byte_equal_with_original": true
+}
