@@ -96,3 +96,5 @@ Supported transformations are identity, negation, absolute value, square, recipr
 Cardinal comparisons are kept **separate** from signed scalar limits. They support N (naturals), Z (integers), Q (rationals), R (reals), P(N) (power set of naturals), and P(R) (power set of reals), using known cardinality equalities and inequalities. Cardinality has no negative polarity. Infinity minus infinity is not valid as ordinary scalar subtraction.
 
 The tool records no user data. Its three simultaneous probes are a mathematical investigation interface, not a scientific proof of universal resonance. Run \`python -m unittest discover -s tests -v\` to execute its regression tests.
+
+The inspector also displays simultaneous paths −n, 0, +n and the alternating sequence (−1)^n n. The alternating sequence has no extended-real limit even though its absolute magnitude grows like n toward +∞; the proof uses odd/even subsequences, not finite-plot extrapolation.
