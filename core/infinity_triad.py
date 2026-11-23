@@ -103,7 +103,7 @@ def _sweep(operation, distance):
 
 
 def _cardinals(left, right):
-    if left not in SETS or right not in SETS:
+    if not isinstance(left, str) or not isinstance(right, str) or left not in SETS or right not in SETS:
         raise ValueError("Unknown set. Choose N, Z, Q, R, P(N), or P(R).")
     a, b = SETS[left], SETS[right]
     relation = "=" if a[0] == b[0] else ("<" if a[0] < b[0] else ">")
