@@ -1,0 +1,15 @@
+{
+  "input_video": "ALittleLightMusic.mp4",
+  "excerpt_start_seconds": 240,
+  "excerpt_seconds": 2,
+  "pcm_sampling_hz": 8000,
+  "pcm_bits_per_sample": 16,
+  "pcm_bytes": 32000,
+  "sha256": "8b45d2847c877ff6c7a82a5dc736160d3e6561751ca1c006e6d30d3188b7aced",
+  "tests_run": 7,
+  "tests_passed": 7,
+  "six_bit_only_differing_bytes": 19157,
+  "full_six_plus_two_encoding_restores_all_bytes": true,
+  "sampled_corruption_trials": 2500,
+  "conclusion": "Digital sound can be represented by ideal 8-bit light-intensity symbols, and decoded; not physical transmission or proof of a vibrating-string ontology."
+}
