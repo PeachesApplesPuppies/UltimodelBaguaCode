@@ -1,0 +1,18 @@
+{
+  "source_bytes": 33028976,
+  "archive_bytes": 32499550,
+  "saved_percent": 1.6029,
+  "sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+  "blocks": 32,
+  "block_size": 1048576,
+  "brotli_quality": 9,
+  "selection_counts": {
+    "raw/brotli": 17,
+    "raw/zlib": 14,
+    "raw/store": 1
+  },
+  "verified": false,
+  "encode_seconds": 5.983,
+  "decode_seconds": 0.195,
+  "byte_exact_verified": true
+}
