@@ -1,0 +1,66 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proof Threshold · Quad-Lens · Ultimodel’</title>
+<style>
+:root{--ink:#193538;--bg:#f2f3ef;--teal:#13645d;--line:#ccd8d3}
+*{box-sizing:border-box}body{font:16px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0 auto;padding:20px;max-width:1080px}
+h1,h2{font-family:Georgia,serif;font-weight:500}section{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0}
+label{display:block;font-weight:600}input,button{font:inherit;border-radius:5px;padding:8px;border:1px solid #85a49b}
+input{width:100%}button{background:var(--teal);color:#fff;cursor:pointer;padding:10px 20px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:14px}.note{font-size:14px;color:#4e6c65}
+a{color:var(--teal)}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#status{font-weight:700}#error{color:#942f21}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+td,th{text-align:left;border-bottom:1px solid var(--line);padding:7px}th{background:#eaf2ed}
+pre{white-space:pre-wrap;overflow-wrap:anywhere}details{margin:8px 0}summary{cursor:pointer}
+.proof{background:#edf5f1;padding:12px;border-radius:8px;margin:8px 0}.proof small{color:#53665f}
+@media(max-width:630px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:440px){.grid{grid-template-columns:1fr}}
+</style>
+<a href="/">← Calculator</a> · <a href="/triad">Three-lens</a> · <a href="/recognition">Recognition</a>
+<h1>Convergent Quad-Lens · Proof Threshold</h1>
+<p>Four probes converge on a center while a separate, exact symbolic proof agenda checks a limited class of polynomials. Choose the minimum number of <strong>different verified mathematical claims</strong> needed before a run may finish.</p>
+<section>
+<div class="grid">
+<label>Polynomial in x<input id="expression" value="x^2"></label>
+<label>Left boundary<input id="left" value="-10"></label>
+<label>Right boundary<input id="right" value="10"></label>
+<label>Width tolerance<input id="tolerance" value="1/100"></label>
+<label>Minimum validated claims (1–12)<input id="proofs" type="number" min="1" max="12" step="1" value="3"></label>
+<label>Maximum rounds (1–128)<input id="rounds" type="number" min="1" max="128" step="1" value="32"></label>
+</div>
+<p class="note">More required claims means deeper proof checking when more distinct obligations are available. If the threshold is impossible, it fails explicitly. The numerical width condition remains separate.</p>
+<div class="row"><button id="run">Run four lenses</button><span id="status" role="status"></span></div><p id="error" role="alert"></p>
+</section>
+<section><h2>Results</h2><p id="summary" role="status"></p><div id="certificates"></div></section>
+<section><h2>Inward-moving probes</h2><p class="note">The outer probes advance to the previous inner probes. Inner probes are recalculated at each round. The exact center does not move.</p><div style="overflow-x:auto" id="history"></div></section>
+<section><h2>Limits of this experiment</h2><p id="limits">The module validates specific claims for rational-coefficient polynomials of degree at most 10. Matching samples alone never prove global equivalence, and proof count is not a numerical confidence percentage.</p></section>
+<script>
+const $=id=>document.getElementById(id);
+function gridHistory(data){
+ const table=document.createElement('table');const h=document.createElement('thead'),tr=document.createElement('tr');
+ for(const k of ['Round','Left outer','Left inner','Right inner','Right outer','Validated claims']){
+ const th=document.createElement('th');th.textContent=k;tr.append(th);}h.append(tr);table.append(h);
+ const b=document.createElement('tbody');
+ for(const row of data.history){const tr=document.createElement('tr');const entries=[row.round,...row.positions,row.validated_proofs];
+ for(const v of entries){const cell=document.createElement('td');cell.textContent=String(v);tr.append(cell);}b.append(tr);}
+ table.append(b);$('history').replaceChildren(table);
+}
+async function run(){
+ $('run').disabled=true;$('error').textContent='';$('status').textContent='Checking…';
+ try{
+ const payload={expression:$('expression').value,left:$('left').value,right:$('right').value,
+ tolerance:$('tolerance').value,min_validated_proofs:Number($('proofs').value),max_rounds:Number($('rounds').value)};
+ const r=await fetch('/api/quad-lens',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const data=await r.json();if(!r.ok)throw Error(data.error||'Request rejected');
+ $('summary').textContent='Status: '+data.status+' · '+data.validated_count+'/'+data.min_validated_proofs+
+ ' required distinct claims ('+data.available_distinct_proofs+' available) · '+data.history.length+' rounds · center '+data.center;
+ $('certificates').replaceChildren();for(const p of data.proofs){const div=document.createElement('div');div.className='proof';
+ const h=document.createElement('strong');h.textContent=p.id.replaceAll('_',' ');
+ const claim=document.createElement('p');claim.textContent=p.claim;
+ const basis=document.createElement('small');basis.textContent=p.verification+' Scope: '+p.scope;
+ div.append(h,claim,basis);$('certificates').append(div);}
+ gridHistory(data);$('limits').textContent=data.limits;
+ $('status').textContent=data.status==='validated_threshold_met'?'Required checks satisfied.':'Proof requirement not fully satisfied.';
+ }catch(e){$('error').textContent=e.message;$('status').textContent='';}
+ finally{$('run').disabled=false;}
+}
+$('run').onclick=run;run();
+</script></html>
