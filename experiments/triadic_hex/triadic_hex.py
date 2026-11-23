@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from pathlib import Path
 import brotli
 from transforms import TRANSFORMS
+from emergency_break import BreakController, StopRequested, install_break_signals, restore_break_signals
+from closed_state import ClosedState
 
 MAGIC = b'ULTRIAD1'
 HEADER = struct.Struct('>8sBBQII32s')  # magic, version, max-depth, byte-len, nodes, root, sha256
@@ -88,7 +90,9 @@ class Entry:
     children: tuple[int,int,int] | None = None
 
 
-def encode(source, archive, *, depth=5, quality=5):
+def encode(source, archive, *, depth=5, quality=5, stop=None):
+    stop = stop or BreakController()
+    stop.check()
     source,archive=Path(source),Path(archive)
     if source.resolve()==archive.resolve(): raise ValueError('Source and archive paths must differ')
     if not (0<=depth<=MAX_DEPTH):raise ValueError('Depth outside supported range')
@@ -102,6 +106,7 @@ def encode(source, archive, *, depth=5, quality=5):
     cache=Counter()
 
     def walk(left,right,d):
+        stop.check()
         size=right-left
         if d<=0 or size<3:
             block=content[left:right]
@@ -112,6 +117,7 @@ def encode(source, archive, *, depth=5, quality=5):
                     cache['deduplicated_leaves']+=1
                     return index
             transform,codec,packed=best_leaf(block,quality)
+            stop.check()
             if len(packed)>MAX_PAYLOAD:raise ValueError('Leaf encoding exceeds maximum')
             index=len(entries)
             entries.append(Entry(0,size,h,METHODS[transform],CODECS[codec],packed))
@@ -141,12 +147,14 @@ def encode(source, archive, *, depth=5, quality=5):
             temp=Path(out.name)
             out.write(HEADER.pack(MAGIC,1,depth,len(content),len(entries),root,root_sha))
             for node in entries:
+                stop.check()
                 out.write(NODE.pack(node.kind,node.size,node.sha))
                 if node.kind==0:
                     out.write(LEAF.pack(node.trans,node.codec,len(node.payload)))
                     out.write(node.payload)
                 else:
                     out.write(BRANCH.pack(*node.children))
+        stop.check()
         os.replace(temp,archive)
         temp=None
     finally:
@@ -159,7 +167,9 @@ def encode(source, archive, *, depth=5, quality=5):
             'selection_counts':dict(cache),'quality':quality,'sha256':root_sha.hex()}
 
 
-def decode(archive,destination):
+def decode(archive,destination,*,stop=None):
+    stop = stop or BreakController()
+    stop.check()
     archive,destination=Path(archive),Path(destination)
     if archive.resolve()==destination.resolve():raise ValueError('Archive and destination paths must differ')
     entries=[]
@@ -171,6 +181,7 @@ def decode(archive,destination):
         if source_len>MAX_SOURCE or count>MAX_NODES or depth>MAX_DEPTH or count==0 or root>=count:
             raise ValueError('Invalid archive size/node/depth bounds')
         for idx in range(count):
+            stop.check()
             row=f.read(NODE.size)
             if len(row)!=NODE.size:raise ValueError('Truncated DAG node')
             kind,size,sha=NODE.unpack(row)
@@ -201,6 +212,7 @@ def decode(archive,destination):
     stack=[(root,0)]
     reachable=set()
     while stack:
+        stop.check()
         idx,level=stack.pop()
         if level>depth:raise ValueError('Tree deeper than declared depth')
         reachable.add(idx)
@@ -210,17 +222,20 @@ def decode(archive,destination):
     if len(reachable)!=len(entries):raise ValueError('Unreachable DAG nodes')
     leaf_cache={}
     def block_bytes(idx):
+        stop.check()
         node=entries[idx]
         if node.kind!=0:raise ValueError('Nonleaf requested as leaf')
         if idx not in leaf_cache:
             limit=8*((node.size+7)//8)
             transformed=decompress(node.payload,R_CODECS[node.codec],limit)
+            stop.check()
             recovered=TRANSFORMS[R_METHODS[node.trans]][1](transformed,node.size)
             if len(recovered)!=node.size or digest(recovered)!=node.sha:
                 raise ValueError('Leaf reconstruction mismatch')
             leaf_cache[idx]=recovered
         return leaf_cache[idx]
     def traversal(idx):
+        stop.check()
         node=entries[idx]
         if node.kind==0:
             yield block_bytes(idx)
@@ -241,9 +256,11 @@ def decode(archive,destination):
         with tempfile.NamedTemporaryFile(dir=destination.parent,prefix='.triadic-',delete=False) as out:
             temp=Path(out.name)
             for part in traversal(root):
+                stop.check()
                 out.write(part);hash_obj.update(part);seen+=len(part)
         if seen!=source_len or hash_obj.digest()!=root_hash:
             raise ValueError('Root reconstruction mismatch')
+        stop.check()
         os.replace(temp,destination);temp=None
     finally:
         if temp is not None:temp.unlink(missing_ok=True)
@@ -263,6 +280,30 @@ def main():
             parser.add_argument('--depth',type=int,default=5)
             parser.add_argument('--quality',type=int,default=5)
     args=cli.parse_args()
-    result=encode(args.input,args.output,depth=args.depth,quality=args.quality) if args.command=='encode' else decode(args.input,args.output)
-    print(json.dumps(result,indent=2))
-if __name__=='__main__':main()
+    stop=BreakController()
+    previous=install_break_signals(stop)
+    try:
+        with ClosedState([args.output]) as checkpoint:
+            checkpoint.begin()
+            try:
+                result=(encode(args.input,args.output,depth=args.depth,
+                               quality=args.quality,stop=stop)
+                        if args.command=='encode' else
+                        decode(args.input,args.output,stop=stop))
+                stop.check()
+            except BaseException:
+                checkpoint.finish(False)
+                raise
+            else:
+                checkpoint.finish(True)
+        print(json.dumps(result,indent=2))
+        return 0
+    except StopRequested:
+        print('BREAK: previous closed state restored; uncommitted output removed')
+        return 130
+    finally:
+        restore_break_signals(previous)
+
+if __name__=='__main__':
+    import sys
+    sys.exit(main())

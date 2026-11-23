@@ -19,6 +19,8 @@ from pathlib import Path
 import tempfile
 
 import triadic_hex as tri
+from emergency_break import BreakController, StopRequested, install_break_signals, restore_break_signals
+from closed_state import ClosedState
 
 # A local plan is a self-contained DAG whose keys identify exact leaf bytes or
 # the ordered child keys of a branch. No data is discarded by these keys:
@@ -49,7 +51,8 @@ class Record:
 
 class Planner:
     def __init__(self, source: bytes, *, quality: int, max_depth: int,
-                 min_leaf: int, boundary_mode: str, max_evaluations: int):
+                 min_leaf: int, boundary_mode: str, max_evaluations: int, stop=None):
+        self.stop = stop or BreakController()
         self.source = source
         self.quality = quality
         self.max_depth = max_depth
@@ -99,12 +102,14 @@ class Planner:
         return key
 
     def leaf_plan(self,left,right):
+        self.stop.check()
         raw=self.source[left:right]
         h=tri.digest(raw)
         key=self.leaf_key(left,right,h)
         if key in self.memo_leaf:
             return self.memo_leaf[key]
         t,c,payload=tri.best_leaf(raw,self.quality)
+        self.stop.check()
         rec=Record(0,left,right,h,payload,tri.METHODS[t],tri.CODECS[c])
         out=Plan(key,{key:rec},rec.bytes_on_disk,0)
         self.memo_leaf[key]=out
@@ -112,6 +117,7 @@ class Planner:
         return out
 
     def visit(self,left,right,remaining):
+        self.stop.check()
         cache_key=(left,right,remaining)
         if cache_key in self.memo:
             return self.memo[cache_key]
@@ -128,6 +134,7 @@ class Planner:
         best=leaf
         seen=set()
         for x,y in self.boundaries(left,right):
+            self.stop.check()
             if (x,y) in seen:continue
             seen.add((x,y))
             if not (x-left>=self.min_leaf and y-x>=self.min_leaf and right-y>=self.min_leaf):
@@ -157,7 +164,9 @@ class Planner:
 
 
 def encode(source,archive,*,max_depth=5,min_leaf=65536,quality=5,
-           boundary_mode='balanced',max_evaluations=500):
+           boundary_mode='balanced',max_evaluations=500,stop=None):
+    stop = stop or BreakController()
+    stop.check()
     source,archive=Path(source),Path(archive)
     if source.resolve()==archive.resolve():raise ValueError('Source and archive must differ')
     if not (0<=max_depth<=tri.MAX_DEPTH):raise ValueError('Invalid maximum depth')
@@ -168,13 +177,14 @@ def encode(source,archive,*,max_depth=5,min_leaf=65536,quality=5,
     if source.stat().st_size>tri.MAX_SOURCE:raise ValueError('Source exceeds prototype bound')
     original=source.read_bytes()
     planner=Planner(original,quality=quality,max_depth=max_depth,min_leaf=min_leaf,
-                    boundary_mode=boundary_mode,max_evaluations=max_evaluations)
+                    boundary_mode=boundary_mode,max_evaluations=max_evaluations,stop=stop)
     best=planner.calculate()
     if len(best.records)>tri.MAX_NODES:raise ValueError('Too many nodes')
     # Topological ordering guarantees the existing v1 decoder accepts the DAG.
     ordered=[]
     indices={}
     def add(key):
+        stop.check()
         if key in indices:return indices[key]
         rec=best.records[key]
         if rec.kind==1:
@@ -189,6 +199,7 @@ def encode(source,archive,*,max_depth=5,min_leaf=65536,quality=5,
     # Catch planner misuse before committing an archive: every parent must be
     # a concatenation of its children, and every leaf references actual bytes.
     for rec,children in ordered:
+        stop.check()
         if rec.kind==1:
             if sum(ordered[i][0].stop-ordered[i][0].start for i in children) != rec.stop-rec.start:
                 raise ValueError('Planner size mismatch')
@@ -197,6 +208,7 @@ def encode(source,archive,*,max_depth=5,min_leaf=65536,quality=5,
                 raise ValueError('Planner leaf mismatch')
     leaf_depths=Counter()
     def count_logical_leaves(key,level):
+        stop.check()
         rec=best.records[key]
         if rec.kind==0:
             leaf_depths[level]+=1
@@ -207,6 +219,7 @@ def encode(source,archive,*,max_depth=5,min_leaf=65536,quality=5,
     branch_trace=[]
     truncated=[False]
     def trace(key,offset,address,level):
+        stop.check()
         if len(branch_trace)>=128:
             truncated[0]=True
             return
@@ -232,12 +245,14 @@ def encode(source,archive,*,max_depth=5,min_leaf=65536,quality=5,
             temp=Path(f.name)
             f.write(tri.HEADER.pack(tri.MAGIC,1,max_depth,len(original),len(ordered),root,tri.digest(original)))
             for rec,children in ordered:
+                stop.check()
                 f.write(tri.NODE.pack(rec.kind,rec.stop-rec.start,rec.digest))
                 if rec.kind==0:
                     f.write(tri.LEAF.pack(rec.transform,rec.codec,len(rec.payload)))
                     f.write(rec.payload)
                 else:
                     f.write(tri.BRANCH.pack(*children))
+        stop.check()
         os.replace(temp,archive)
         temp=None
     finally:
@@ -275,17 +290,43 @@ def main():
             p.add_argument('--max-evaluations',type=int,default=500,
                            help='Maximum number of regions expanded into child candidates')
     args=parser.parse_args()
-    if args.command=='decode':
-        result=tri.decode(args.input,args.output)
-    else:
-        parameters=dict(max_depth=args.max_depth,min_leaf=args.min_leaf,
-                        quality=args.quality,boundary_mode=args.boundary_mode,
-                        max_evaluations=args.max_evaluations)
-        if args.command=='encode':
-            result=encode(args.input,args.output,**parameters)
-        else:
+    stop=BreakController()
+    previous=install_break_signals(stop)
+    try:
+        if args.command == 'plan':
+            parameters=dict(max_depth=args.max_depth,min_leaf=args.min_leaf,
+                            quality=args.quality,boundary_mode=args.boundary_mode,
+                            max_evaluations=args.max_evaluations,stop=stop)
             with tempfile.TemporaryDirectory(prefix='autodepth-plan-') as d:
                 result=encode(args.input,Path(d)/'candidate.ut3',**parameters)
             result['mode']='plan_only; temporary archive discarded'
-    print(json.dumps(result,indent=2))
-if __name__=='__main__':main()
+        else:
+            # Durable pre-run closed state. The original output is backed up
+            # before ANY encoding/decoding takes place.
+            with ClosedState([args.output]) as checkpoint:
+                checkpoint.begin()
+                try:
+                    if args.command=='decode':
+                        result=tri.decode(args.input,args.output,stop=stop)
+                    else:
+                        result=encode(args.input,args.output,
+                                      max_depth=args.max_depth,min_leaf=args.min_leaf,
+                                      quality=args.quality,boundary_mode=args.boundary_mode,
+                                      max_evaluations=args.max_evaluations,stop=stop)
+                    stop.check()
+                except BaseException:
+                    checkpoint.finish(False)
+                    raise
+                else:
+                    checkpoint.finish(True)
+        print(json.dumps(result,indent=2))
+        return 0
+    except StopRequested:
+        print('BREAK: previous closed state restored; uncommitted output removed')
+        return 130
+    finally:
+        restore_break_signals(previous)
+
+if __name__=='__main__':
+    import sys
+    sys.exit(main())
