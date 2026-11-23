@@ -98,3 +98,14 @@ Cardinal comparisons are kept **separate** from signed scalar limits. They suppo
 The tool records no user data. Its three simultaneous probes are a mathematical investigation interface, not a scientific proof of universal resonance. Run `python -m unittest discover -s tests -v` to execute its regression tests.
 
 The inspector also displays simultaneous paths −n, 0, +n and the alternating sequence (−1)^n n. The alternating sequence has no extended-real limit even though its absolute magnitude grows like n toward +∞; the proof uses odd/even subsequences, not finite-plot extrapolation.
+
+
+## Quad-Lens: adjustable proof threshold
+
+Open **Quad-Lens Proofs** in the calculator navigation (or `http://127.0.0.1:8765/quad-lens`). The four sample points move inward each round: L, (L+C)/2, (C+R)/2, R, with C the fixed midpoint. The outside points jump to the old inner points and the new inner points are recalculated for the next round.
+
+Choose `min_validated_proofs` from **1 to 12** and a numerical width `tolerance` separately. The run only reports `validated_threshold_met` when both conditions are met. If not enough different verified claims are available, it reports `insufficient_distinct_proofs`, or `round_cap_before_threshold` if the search budget runs out. Sample matches are **never** promoted into mathematical proofs.
+
+At present the proof engine supports exact rational-coefficient polynomials in x through degree 10. The proof agenda checks distinct mathematical claims, such as full-real domain and continuity, exact center value, polynomial parity, asymptotic tails, exact noninjectivity counterexample (when found), and injectivity of nonzero-slope linear expressions. These are **different claims**, not independent demonstrations of a single scientific hypothesis; increasing the threshold does not turn them into stronger evidence of a single relationship. Proofs of global equivalence require an appropriate symbolic identity argument.
+
+JSON API: `POST /api/quad-lens` with `{"expression":"x^2","left":"-10","right":"10","tolerance":"1/100","min_validated_proofs":3,"max_rounds":32}`. The result includes proof IDs, claims, justifications, scopes, probe values, and a clear stop reason. Run `python -m unittest discover -s tests -v` for regression coverage.
