@@ -1,0 +1,22 @@
+name: Adaptive HEX regression
+on:
+  pull_request:
+    paths:
+      - "experiments/adaptive_hex/**"
+      - ".github/workflows/adaptive-hex-tests.yml"
+  push:
+    paths:
+      - "experiments/adaptive_hex/**"
+      - ".github/workflows/adaptive-hex-tests.yml"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install -r experiments/adaptive_hex/requirements.txt
+      - name: Run exact-reconstruction and corruption regressions
+        run: python -m unittest discover -s experiments/adaptive_hex -p "test_*.py" -v
