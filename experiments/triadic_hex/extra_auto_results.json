@@ -1,0 +1,56 @@
+{
+  "long_repeat_18MiB": {
+    "source_bytes": 18874368,
+    "archive_bytes": 6291614,
+    "saved_percent": 66.6658,
+    "max_depth": 3,
+    "chosen_depth": 1,
+    "min_leaf": 524288,
+    "boundary_mode": "balanced",
+    "evaluated_regions": 40,
+    "budget": 900,
+    "node_count": 2,
+    "leaf_count": 1,
+    "branch_count": 1,
+    "planning_events": {
+      "leaf_choice:hex6+2/brotli": 1,
+      "leaf_choice:raw/store": 13,
+      "leaf_wins": 12,
+      "matching_leaf_reused": 26,
+      "branch_wins": 1
+    },
+    "successful_split_modes": {
+      "balanced": 1
+    },
+    "sha256": "c77ee057dedac22472e2b6a8816a3dad4abeaeafcba545d1995606124e753858",
+    "verified": false,
+    "seconds": 5.329,
+    "sha256_check": true
+  },
+  "aligned_3MiB": {
+    "source_bytes": 3145728,
+    "archive_bytes": 1048879,
+    "saved_percent": 66.657,
+    "max_depth": 3,
+    "chosen_depth": 0,
+    "min_leaf": 65536,
+    "boundary_mode": "aligned",
+    "evaluated_regions": 217,
+    "budget": 900,
+    "node_count": 1,
+    "leaf_count": 1,
+    "branch_count": 0,
+    "planning_events": {
+      "leaf_choice:hex6+2/brotli": 53,
+      "leaf_choice:raw/store": 72,
+      "leaf_wins": 31,
+      "matching_leaf_reused": 35,
+      "leaf_choice:raw/brotli": 57
+    },
+    "successful_split_modes": {},
+    "sha256": "a45fc715335acef671ee53f6979853fe755323ab8b24fc398aa30eefe6599263",
+    "verified": false,
+    "seconds": 2.011,
+    "sha256_check": true
+  }
+}
