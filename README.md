@@ -86,3 +86,26 @@ From the calculator choose **Recognition** (or open /recognition on the local se
 For the rectangle experiment enter 10:6.18 in A and 5:3.09 in B. Select Pair and save to compare exact aspects. Choose Phi and enter 0.01 for a tolerance of 0.01 percent before testing A against φ. Press **TRY TO BREAK THIS** to record the pair stress tests. To test the bad example, start a second wave with A = 10:4 and the same Phi tolerance.
 
 The local journal persists across restarts in ~/.bce-ultimodel/recognitions.sqlite3. Set BCE_RECOGNITION_DB to choose another file. See RECOGNITION_REPORT.md for the comparison methods and their limitations.
+
+## Both Sides + Middle — three-lens infinity inspector
+
+Open **Both Sides + Middle** from the local calculator navigation (or visit `http://127.0.0.1:8765/triad`). The locally served page evaluates one supported transformation at three positions **−R, 0, +R**, and also at **−1/R, 0, +1/R** to inspect the two approaches to the middle. It displays exact rational values, signs, absolute magnitudes, the value at zero (or its undefined status), and whether the two wings merge.
+
+Supported transformations are identity, negation, absolute value, square, reciprocal and sign. The endpoint `POST /api/triad` takes a JSON object such as `{"operation":"absolute","radius":"10","cardinal_left":"N","cardinal_right":"R"}` and returns JSON. Radius must be greater than 1 and at most one million. The limit labels for these six functions are established mathematical results **not extrapolations inferred from finite samples**.
+
+Cardinal comparisons are kept **separate** from signed scalar limits. They support N (naturals), Z (integers), Q (rationals), R (reals), P(N) (power set of naturals), and P(R) (power set of reals), using known cardinality equalities and inequalities. Cardinality has no negative polarity. Infinity minus infinity is not valid as ordinary scalar subtraction.
+
+The tool records no user data. Its three simultaneous probes are a mathematical investigation interface, not a scientific proof of universal resonance. Run `python -m unittest discover -s tests -v` to execute its regression tests.
+
+The inspector also displays simultaneous paths −n, 0, +n and the alternating sequence (−1)^n n. The alternating sequence has no extended-real limit even though its absolute magnitude grows like n toward +∞; the proof uses odd/even subsequences, not finite-plot extrapolation.
+
+
+## Quad-Lens: adjustable proof threshold
+
+Open **Quad-Lens Proofs** in the calculator navigation (or `http://127.0.0.1:8765/quad-lens`). The four sample points move inward each round: L, (L+C)/2, (C+R)/2, R, with C the fixed midpoint. The outside points jump to the old inner points and the new inner points are recalculated for the next round.
+
+Choose `min_validated_proofs` from **1 to 12** and a numerical width `tolerance` separately. The run only reports `validated_threshold_met` when both conditions are met. If not enough different verified claims are available, it reports `insufficient_distinct_proofs`, or `round_cap_before_threshold` if the search budget runs out. Sample matches are **never** promoted into mathematical proofs.
+
+At present the proof engine supports exact rational-coefficient polynomials in x through degree 10. The proof agenda checks distinct mathematical claims, such as full-real domain and continuity, exact center value, polynomial parity, asymptotic tails, exact noninjectivity counterexample (when found), and injectivity of nonzero-slope linear expressions. These are **different claims**, not independent demonstrations of a single scientific hypothesis; increasing the threshold does not turn them into stronger evidence of a single relationship. Proofs of global equivalence require an appropriate symbolic identity argument.
+
+JSON API: `POST /api/quad-lens` with `{"expression":"x^2","left":"-10","right":"10","tolerance":"1/100","min_validated_proofs":3,"max_rounds":32}`. The result includes proof IDs, claims, justifications, scopes, probe values, and a clear stop reason. Run `python -m unittest discover -s tests -v` for regression coverage.

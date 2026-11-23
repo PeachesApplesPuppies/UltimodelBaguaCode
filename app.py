@@ -5,6 +5,8 @@ from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from pathlib import Path
 from core.instrument import compute
 from core.tokens import session, csv_export
+from core.infinity_triad import investigate
+from core.quad_lens_proofs import run as run_quad_lens
 
 class Handler(BaseHTTPRequestHandler):
     def send(self,code,body,mime):
@@ -12,6 +14,10 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path=="/recognition":
             return self.send(200,(Path(__file__).parent/"ui/recognition.html").read_bytes(),"text/html; charset=utf-8")
+        if self.path=="/quad-lens":
+            return self.send(200,(Path(__file__).parent/"ui/quad_lens.html").read_bytes(),"text/html; charset=utf-8")
+        if self.path=="/triad":
+            return self.send(200,(Path(__file__).parent/"ui/infinity_triad.html").read_bytes(),"text/html; charset=utf-8")
         if self.path=="/tokens":
             return self.send(200,(Path(__file__).parent/"ui/tokens.html").read_bytes(),"text/html; charset=utf-8")
         if self.path=="/elements.json":
@@ -20,7 +26,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path!="/":return self.send(404,b"Not found","text/plain")
         self.send(200,(Path(__file__).parent/"ui/index.html").read_bytes(),"text/html; charset=utf-8")
     def do_POST(self):
-        if self.path not in ("/api/calculate","/api/tokens","/api/tokens.csv","/api/recognition","/api/recognition.csv"):return self.send(404,b"Not found","text/plain")
+        if self.path not in ("/api/calculate","/api/tokens","/api/tokens.csv","/api/recognition","/api/recognition.csv","/api/triad","/api/quad-lens"):return self.send(404,b"Not found","text/plain")
         try:
             n=int(self.headers.get("Content-Length","0"))
             if n>128000:raise ValueError("Request too large.")
@@ -30,7 +36,9 @@ class Handler(BaseHTTPRequestHandler):
                     record=operate({"action":"read","event":payload["event"]})
                     return self.send(200,export_csv(record).encode(),"text/csv; charset=utf-8")
                 return self.send(200,json.dumps(operate(payload),allow_nan=False).encode(),"application/json")
-            result=compute(payload) if self.path=="/api/calculate" else session(payload)
+            result=(compute(payload) if self.path=="/api/calculate" else
+                    investigate(payload) if self.path=="/api/triad" else
+                    run_quad_lens(**payload) if self.path=="/api/quad-lens" else session(payload))
             if self.path=="/api/tokens.csv":
                 return self.send(200,csv_export(result).encode(),"text/csv; charset=utf-8")
             body=json.dumps(result,allow_nan=False).encode()
