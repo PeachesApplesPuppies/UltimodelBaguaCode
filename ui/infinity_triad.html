@@ -27,6 +27,7 @@ a{color:var(--forest)}.fields{display:grid;grid-template-columns:repeat(4,minmax
 <section><h2>Far wings: −R · 0 · +R</h2><div id="far" class="table"></div><p id="farNote" class="hint"></p></section>
 <section><h2>Near the middle: −1/R · 0 · +1/R</h2><div id="near" class="table"></div><p id="nearNote" class="hint"></p></section>
 <section><h2>Limits and information</h2><dl id="limits"></dl><dl id="info"></dl></section>
+<section><h2>Simultaneous paths through time</h2><p class="hint">Compare the two diverging wings, a fixed center, and an alternating path whose magnitude still increases.</p><div id="trajectories" class="table"></div><p id="trajectoryProof" class="hint"></p></section>
 <section><h2>Cardinality: a different kind of magnitude</h2><div id="cardinal"></div><p class="hint">A cardinality counts the size of a set. Unlike a signed real number, it does not have positive and negative wings. Its vertical position here is a comparison of known sizes, not a coordinate on the real line.</p></section>
 <section><h2>Where the analogy stops</h2><p id="boundary" class="hint"></p></section>
 <script>
@@ -46,13 +47,21 @@ function table(host,sweep){
 function infoGrid(host,data){const dl=$(host);dl.replaceChildren();for(const [label,value] of Object.entries(data)){
  const div=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label.replaceAll('_',' ');dd.textContent=String(value);div.append(dt,dd);dl.append(div);
 }}
+function drawTrajectories(t){
+ const root=$('trajectories');root.replaceChildren();const table=document.createElement('table');
+ const head=document.createElement('tr');
+ for(const name of ['n','−n','middle 0','+n','(−1)^n n','|alternating|']){const th=document.createElement('th');th.textContent=name;head.append(th);}
+ const thead=document.createElement('thead');thead.append(head);table.append(thead);const tbody=document.createElement('tbody');
+ for(const p of t.samples){const tr=document.createElement('tr');for(const v of [p.n,p.negative,p.middle,p.positive,p.alternating,p.alternating_magnitude]){const td=document.createElement('td');td.textContent=String(v);tr.append(td);}tbody.append(tr);}
+ table.append(tbody);root.append(table);$('trajectoryProof').textContent=t.proof_outline;
+}
 async function run(){ $('run').disabled=true;$('error').textContent='';$('status').textContent='Calculating…';
  try{const res=await fetch('/api/triad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operation:$('op').value,radius:$('radius').value,cardinal_left:$('setA').value,cardinal_right:$('setB').value})});
  const data=await res.json();if(!res.ok)throw Error(data.error||'Invalid input');
  table('far',data.far);table('near',data.near_zero);
  $('farNote').textContent=data.far.wing_outputs_equal?'The two wings produce the same output: side information was merged at this distance.':'The wings produce different outputs at this distance.';
  $('nearNote').textContent=data.near_zero.middle.defined?'The middle is defined for this transformation.':'The middle is undefined: do not infer a middle value from either approach.';
- infoGrid('limits',data.limits);infoGrid('info',data.information);
+ infoGrid('limits',data.limits);infoGrid('info',data.information);drawTrajectories(data.trajectories);
  $('cardinal').textContent=data.cardinality.left.set+' ('+data.cardinality.left.cardinality+') '+data.cardinality.relation+' '+data.cardinality.right.set+' ('+data.cardinality.right.cardinality+'). '+data.cardinality.why;
  $('boundary').textContent=data.interpretation_boundary+' '+data.cardinality.boundary;
  $('status').textContent='Three-lens investigation complete.';
