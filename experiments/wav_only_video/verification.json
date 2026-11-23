@@ -1,0 +1,20 @@
+{
+  "experiment": "MP4 byte payload stored in canonical 16-bit PCM data-WAV",
+  "date": "2026-11-23",
+  "media_included_in_git": false,
+  "original_filename": "ALittleLightMusic.mp4",
+  "recovered_filename": "ALittleLightMusic_recovered.mp4",
+  "data_wav_filename": "ALittleLightMusic_video_data.wav",
+  "original_size_bytes": 33028976,
+  "recovered_size_bytes": 33028976,
+  "data_wav_size_bytes": 66058094,
+  "original_sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+  "recovered_sha256": "615a72af951d8c4833bca80dc7a569340abdfca2b4574af9b1e72302f580b8ca",
+  "data_wav_sha256": "6f764b56fb9cf61b93a739c6bb62bf8ab7fc8ba80380ccd3734503c313bdc706",
+  "bytewise_equal": true,
+  "test_methods_passed": 15,
+  "test_methods_total": 15,
+  "full_two_byte_fixture_count": 65536,
+  "decoder_wav_only_rerun": "passed",
+  "caveat": "Data-WAV stores video bytes, not original audio alone; no copyrighted media uploaded."
+}
