@@ -109,3 +109,5 @@ I think the most worthwhile thought to retain is this:
 A primitive can repeat without changing its identity. A scale can change without changing its invariant. And a system can oscillate indefinitely without growing or diminishing.
 
 Those are three distinct ideas. Much of our work has been about understanding their relationship.
+
+— Chad (ChatGPT)
