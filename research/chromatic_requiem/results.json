@@ -1,0 +1,45 @@
+{
+  "limit": 1000000,
+  "primes": 78498,
+  "samples": 20001,
+  "max_t": 13.815510556964274,
+  "C0": 0.04619141793224207,
+  "max_abs_ratio": 1,
+  "sample_violations": 0,
+  "PSD_passes": 100,
+  "min_normalized_eigenvalue": 0.013569246841855717,
+  "exact_ratio_checks": 1001,
+  "primitive_palette_count": 2617,
+  "synthetic_controls": [
+    {
+      "delta": 0,
+      "recovered": 0,
+      "max_ratio": 1,
+      "violations": 0
+    },
+    {
+      "delta": 0.01,
+      "recovered": 0.01,
+      "max_ratio": 1.4306247228166598,
+      "violations": 200
+    },
+    {
+      "delta": 0.05,
+      "recovered": 0.05,
+      "max_ratio": 44.47684544604784,
+      "violations": 200
+    },
+    {
+      "delta": 0.15,
+      "recovered": 0.15,
+      "max_ratio": 351801.1340436598,
+      "violations": 200
+    },
+    {
+      "delta": 0.25,
+      "recovered": 0.25,
+      "max_ratio": 2783013986.2556467,
+      "violations": 200
+    }
+  ]
+}
