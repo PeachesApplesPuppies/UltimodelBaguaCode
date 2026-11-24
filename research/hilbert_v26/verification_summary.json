@@ -1,0 +1,17 @@
+{
+  "primes": 664579,
+  "integers": 10000000,
+  "endpoint_regressions": 6,
+  "growth_controls_passed": 8,
+  "shift_norm_error": 1.1368683772161603e-13,
+  "prime_gram_eigenvalues": [
+    0.02280561630942976,
+    0.1535392022607241,
+    0.7017212532086788,
+    0.9784506560895322,
+    1.0108138271927785,
+    3.132669444938858
+  ],
+  "RH": "unproved",
+  "note": "Extracted summary of locally executed v2.6 numerical results; full results.json and run.log are in the downloadable research archive."
+}
