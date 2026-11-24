@@ -1,0 +1,25 @@
+# The YanRiemann Requiem — arithmetic, energy, and spectral reconstruction
+
+Research synthesis, November 23, 2026. Not an independent proof of RH, not a formal Lean verification, and no claim of priority. The title acknowledges Yan Ru Pei's roadmap, not his participation or endorsement. Credit for the arithmetic proof: Levent Alpöge and Claude.
+
+Sources:
+- Lean/Mathlib certification: https://leanprover-community.github.io/blog/posts/riemann-hypothesis/
+- Yan Ru Pei's roadmap: https://peabrane.github.io/post/riemann-hypothesis-lean-roadmap/
+- Waterloo working exposition, I.1 (formula and arithmetic window input): https://www.math.uwaterloo.ca/~mrubinst/alpoge_claude_grh/zeta-paper_v2.pdf
+- Kaczorowski–Pintz (1986), Thm 1 and Cor 1: https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1986.Kaczorowski_1.pdf
+- Related positivity research: Suzuki, https://doi.org/10.1112/jlms.12785 ; recent directly overlapping stationary kernel observation https://rstation.ai/problems/riemann_hypothesis/papers/190 .
+
+## Definition and explicit formula
+Let G(x)=sum_{n<=x} Lambda(n)(x/n-1)-x log x+(1+gamma_E)x. For t in R set u=|t| and C(t)=exp(-u/2)[G(exp u)-log(2pi)+sum_{n>=1} exp(-2nu)/(2n(2n+1))]. The correction removes the residues at negative even integers. The classical explicit formula for the Riesz mean (or Mellin inversion of -zeta'/[s(s-1)zeta]-1/(s-1)^2+(1+gamma_E)/(s-1)) gives C(t)=sum_rho exp((rho-1/2)u)/(rho(1-rho)), with multiplicity. All sums converge absolutely on compact t intervals by zero counting; the t=0 identity follows by continuity. C(0)=2+gamma_E-log(4pi), using the sum of 1/(2n(2n+1))=1-log 2.
+
+## Equivalence
+RH implies C(t)=sum_w a_w exp(iwt) on the full real line, where distinct real ordinates w have a_w=m_w/(1/4+w^2)>0. Symmetry gives the even extension, and sum a_w=C(0). The series converges uniformly. For arbitrary finite times and complex c_j, the quadratic form of [C(t_i-t_j)] is sum_w a_w |sum_j c_j exp(-iwt_j)|^2>=0. Conversely, positivity of even the two-by-two matrices with times 0,t implies |C(t)|<=C(0). Bounded C gives G(x)=O(sqrt x). Its Mellin transform is holomorphic for Re s>1/2, yet any zeta zero there has nonzero residue -m/[rho(rho-1)], a contradiction. Functional-equation symmetry finishes. Thus boundedness, full positive definiteness, two-point positivity, and RH are equivalent. The Phase I/II Mellin argument identifies these with the original energy criterion limsup V_j^(1/j)<=1. These are classical-ingredient deductions, with directly related prior work; no novelty asserted.
+
+## Arithmetic supply, without assuming RH
+Use the external arithmetic window result: for each eps>0, arbitrarily large Y satisfy G(x)<=x^(1/2+eps) for every x in [Y,Y^(3/2)]. This is a theorem supplied by the Alpöge–Claude work, not established in this note. To see the analytic implication, suppose Theta=sup Re rho>1/2 and choose theta between 1/2 and Theta. The function f(x)=G(x)-2x^theta for x>=1 (zero below 1) has meromorphic Mellin transform F_G(s)-2/(s-theta), with rightmost singularity boundary Theta and no real singularity there. The cited windowed Kaczorowski–Pintz sign-change theorem applies; every sufficiently late [X^(3/4),X] contains a positive value. Take X=Y^(3/2); on this subwindow f<0 by the arithmetic input, contradiction. Hence RH and the above conclusions follow from the external arithmetic supply plus classical analysis. This duplicates the known analytic route rather than independently proving the arithmetic step.
+
+## Reconstruction, energy, and finite resolution
+Under the established RH input, define B_T(v)=(1/T)int_0^T C(t)exp(-ivt)dt. Absolute summability permits termwise integration and dominated convergence, giving B(v)=lim B_T(v)=a_v for a zero ordinate v, and 0 otherwise. Therefore (1/4+v^2)B(v) is its multiplicity, or zero. This reconstructs the atomic zero measure from the infinite exact prime signal. The energy identity lim (1/T)int_0^T |C(t)|^2 dt=sum_w a_w^2 follows by the same argument on the absolutely convergent double sum. Finite-time error |B_T(v)-B(v)|<=sum_{w!=v} a_w min(1,2/(T|w-v|)). The truncation kernel is exp(i(w-v)T/2)sinc((w-v)T/2); close ordinates and small coefficients limit reconstruction. Finite samples and numerical tests do not certify completeness or multiplicity at arbitrarily high ordinates.
+
+## Executed numerical checks
+Sieve through 1,000,000 prime powers, extended-precision arithmetic. 100 random 12x12 Requiem matrices had nonnegative minimum eigenvalue (minimum 0.0006267827519). Sampled 200001 points in [0,log(1e6)-1e-6]; maximum absolute C was C(0)=0.04619141793224207. Fourier coefficient magnitudes were not used to certify new zeros; the first three known ordinates were supplied as test frequencies. Real coefficient estimates 0.00502843688, 0.00228761329, 0.00154310180, vs simple-zero predictions 0.00499898883, 0.00226154214, 0.00159797250. Complex absolute errors 3.10e-5, 2.64e-5, 5.64e-5. Numerical tests are illustrations only. Formal verification and independent review outstanding.
