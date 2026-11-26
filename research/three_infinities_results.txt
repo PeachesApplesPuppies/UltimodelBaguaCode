@@ -1,27 +1,27 @@
-Three Infinities experiment — numerical output (2026-11-26).
-Triangle inradius 0.2, circumradius 0.4. Counts ordered [T,R1,R2,R3,disk].
-Synthetic roots: 0.08+0.03i (T); 0.65+0.08i (R1); -0.4380570353250394+0.5839572191541408i (R2); -0.5301925618545429-0.6123690450652424i (R3).
-radius samples/segment precision model counts max sampled phase step
-0.75 64 25 actual [0,0,0,0,0] 0.105312
-0.75 64 25 synthetic [1,1,1,0,3] 1.143589
-0.75 64 25 actual*synthetic [1,1,1,0,3] 1.137148
-0.75 128 35 actual [0,0,0,0,0] 0.052875
-0.75 128 35 synthetic [1,1,1,0,3] 0.623213
-0.75 128 35 actual*synthetic [1,1,1,0,3] 0.620003
-0.95 64 25 actual [0,0,0,0,0] 0.5844
-0.95 64 25 synthetic [1,1,1,1,4] 0.290492
-0.95 64 25 actual*synthetic [1,1,1,1,4] 0.755787
-0.95 128 35 actual [0,0,0,0,0] 0.317047
-0.95 128 35 synthetic [1,1,1,1,4] 0.145897
-0.95 128 35 actual*synthetic [1,1,1,1,4] 0.402261
-0.99 64 25 actual [0,0,0,0,0] 1.28835
-0.99 64 25 synthetic [1,1,1,1,4] 0.250146
-0.99 64 25 actual*synthetic [1,1,1,1,4] 1.453475
-0.99 128 35 actual [0,0,0,0,0] 1.028173
-0.99 128 35 synthetic [1,1,1,1,4] 0.125403
-0.99 128 35 actual*synthetic [1,1,1,1,4] 1.110374
-Projection reconstruction error 0.0.
-m | radius | retained branch | absolute original s reconstruction error
+Triangle inradius 0.2 circumradius 0.4
+Synthetic roots: [('T', (0.08+0.03j), np.float64(0.08544003745317531)), ('R1', (0.65+0.08j), np.float64(0.6549045732013177)), ('R2', (-0.4380570353250394+0.5839572191541408j), np.float64(0.73)), ('R3', (-0.5301925618545429-0.6123690450652424j), np.float64(0.81))]
+Columns: radius, samples per segment, precision, model, counts [T,R1,R2,R3,disk], maximum sampled phase step (radians)
+0.75 64 25 actual [np.float64(-0.0), np.float64(0.0), np.float64(-0.0), np.float64(0.0), np.float64(0.0)] 0.105312
+0.75 64 25 synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(-0.0), np.float64(3.0)] 1.143589
+0.75 64 25 actual*synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(-0.0), np.float64(3.0)] 1.137148
+0.75 128 35 actual [np.float64(-0.0), np.float64(-0.0), np.float64(0.0), np.float64(0.0), np.float64(-0.0)] 0.052875
+0.75 128 35 synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(-0.0), np.float64(3.0)] 0.623213
+0.75 128 35 actual*synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(-0.0), np.float64(3.0)] 0.620003
+0.95 64 25 actual [np.float64(-0.0), np.float64(0.0), np.float64(0.0), np.float64(-0.0), np.float64(0.0)] 0.5844
+0.95 64 25 synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 0.290492
+0.95 64 25 actual*synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 0.755787
+0.95 128 35 actual [np.float64(-0.0), np.float64(-0.0), np.float64(0.0), np.float64(0.0), np.float64(-0.0)] 0.317047
+0.95 128 35 synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 0.145897
+0.95 128 35 actual*synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 0.402261
+0.99 64 25 actual [np.float64(-0.0), np.float64(0.0), np.float64(0.0), np.float64(0.0), np.float64(0.0)] 1.28835
+0.99 64 25 synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 0.250146
+0.99 64 25 actual*synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 1.453475
+0.99 128 35 actual [np.float64(-0.0), np.float64(0.0), np.float64(-0.0), np.float64(0.0), np.float64(-0.0)] 1.028173
+0.99 128 35 synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 0.125403
+0.99 128 35 actual*synthetic [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(4.0)] 1.110374
+Projection recovery and power-map recovery with retained branch index:
+projection reconstruction error 0.0
+m, radius, retained branch, absolute original s reconstruction error
 1 0.9990009012113479 0 4.1543109e-65
 3 0.99700569723191335 0 4.1543109e-65
 4 0.9960095900475297 0 4.1543109e-65
@@ -29,21 +29,22 @@ m | radius | retained branch | absolute original s reconstruction error
 12 0.98807647671657497 0 4.7847322e-65
 144 0.8659378465211117 2 4.1543109e-65
 1728 0.17776270695283638 19 4.1543109e-65
-20736 9.956068144514842e-10 233 4.7847322e-65
-Synthetic high-height point s=.7+3e12i (not a zeta zero):
-negative log radius 2.22222222222222222e-26
-degree to halve radius 31191623125197538923775447
+20736 9.9560681445148421e-10 233 4.7847322e-65
+Without branch index, m-th root is ambiguous; compression does not preserve direction by itself.
+High-height example: s=.7+3e12 i (synthetic, not a zeta zero).
+negative log radius 2.22222222222222222e-26 degree to halve radius 31191623125197538923775447.0
 depth 12 degree 8916100448256 radius 0.999999999999801864
 depth 24 degree 79496847203390844133441536 radius 0.170913686961890264
 depth 25 degree 953962166440690129601298432 radius 6.2132970172117365e-10
-Compressed polygon tests v radius .5; counts [actual,synthetic,product]; max actual phase step:
-3 64 [0,3,3] 0.124704
-3 128 [0,3,3] 0.062744
-4 64 [0,4,4] 0.125962
-4 128 [0,4,4] 0.063336
-6 64 [0,4,4] 0.119492
-6 128 [0,4,4] 0.060082
-12 64 [0,4,4] 0.098235
-12 128 [0,4,4] 0.049467
-Equal-count counterexample: three roots at radius .7, regions R1,R2,R3, winding [0,1,1,1,3].
-Note: empirical winding measurements are not certified zero counts. Values transcribed from local experiment output with numpy wrappers removed; no claim of RH proof.
+Compressed polygon tests: radius in v=0.5, count actual / synthetic / product, max actual phase step
+3 64 [np.float64(0.0), np.float64(3.0), np.float64(3.0)] 0.124704 expected synthetic 3
+3 128 [np.float64(0.0), np.float64(3.0), np.float64(3.0)] 0.062744 expected synthetic 3
+4 64 [np.float64(0.0), np.float64(4.0), np.float64(4.0)] 0.125962 expected synthetic 4
+4 128 [np.float64(0.0), np.float64(4.0), np.float64(4.0)] 0.063336 expected synthetic 4
+6 64 [np.float64(-0.0), np.float64(4.0), np.float64(4.0)] 0.119492 expected synthetic 4
+6 128 [np.float64(0.0), np.float64(4.0), np.float64(4.0)] 0.060082 expected synthetic 4
+12 64 [np.float64(-0.0), np.float64(4.0), np.float64(4.0)] 0.098235 expected synthetic 4
+12 128 [np.float64(0.0), np.float64(4.0), np.float64(4.0)] 0.049467 expected synthetic 4
+Equal-count counterexample: one orbit of three interior roots at modulus 0.7.
+regions ['R1', 'R2', 'R3'] radii [0.7 0.7 0.7]
+winding [np.float64(0.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(3.0)]
