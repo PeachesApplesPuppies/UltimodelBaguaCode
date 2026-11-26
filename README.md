@@ -86,3 +86,7 @@ From the calculator choose **Recognition** (or open /recognition on the local se
 For the rectangle experiment enter 10:6.18 in A and 5:3.09 in B. Select Pair and save to compare exact aspects. Choose Phi and enter 0.01 for a tolerance of 0.01 percent before testing A against φ. Press **TRY TO BREAK THIS** to record the pair stress tests. To test the bad example, start a second wave with A = 10:4 and the same Phi tolerance.
 
 The local journal persists across restarts in ~/.bce-ultimodel/recognitions.sqlite3. Set BCE_RECOGNITION_DB to choose another file. See RECOGNITION_REPORT.md for the comparison methods and their limitations.
+
+## Public research archive — YanRiemann Requiem / Golden Bang (2026-11-26)
+
+Start with the [research archive index](research/ARCHIVE_INDEX.md), the [metaphor ledger](research/yanriemann-metaphor-ledger.md), and [Metaphors as a research instrument](research/metaphors-and-method.md). Includes historical drafts, executable numerical experiments, recorded results, negative controls, and open proof obligations. Human-directed, AI-assisted research; not an independently audited proof of the Riemann hypothesis.
