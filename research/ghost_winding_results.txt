@@ -1,0 +1,27 @@
+
+Actual first zero: center=(0.5+14.134725141734695j), radius=0.1; original winding=1.000000000
+  X=    100 primes=   25: log10|reduced| range [-0.313, 0.019]; raw winding=1.000000000; corrected winding=1.000000000; max ghost phase step=0.010 rad
+  X=  10000 primes= 1229: log10|reduced| range [0.020, 1.550]; raw winding=1.000000000; corrected winding=1.000000000; max ghost phase step=0.079 rad
+  X=1000000 primes=78498: log10|reduced| range [-5.899, 3.418]; raw winding=1.000000000; corrected winding=1.000000000; max ghost phase step=0.567 rad
+
+Displaced control: center=(0.7+14.134725141734695j), radius=0.1; original winding=-0.000000000
+  X=    100 primes=   25: log10|reduced| range [-0.313, -0.071]; raw winding=0.000000000; corrected winding=-0.000000000; max ghost phase step=0.007 rad
+  X=  10000 primes= 1229: log10|reduced| range [0.012, 0.053]; raw winding=0.000000000; corrected winding=-0.000000000; max ghost phase step=0.021 rad
+  X=1000000 primes=78498: log10|reduced| range [-0.464, 0.180]; raw winding=0.000000000; corrected winding=-0.000000000; max ghost phase step=0.036 rad
+
+Nonzero critical-line control: center=(0.5+1j), radius=0.1; original winding=0.000000000
+  X=    100 primes=   25: log10|reduced| range [0.507, 1.212]; raw winding=0.000000000; corrected winding=0.000000000; max ghost phase step=0.031 rad
+  X=  10000 primes= 1229: log10|reduced| range [-3.866, 5.742]; raw winding=-0.000000000; corrected winding=0.000000000; max ghost phase step=0.430 rad
+  X=1000000 primes=78498: log10|reduced| range [-110.470, -3.626]; raw winding=40.000000000; corrected winding=0.000000000; max ghost phase step=8.393 rad
+
+Synthetic off-line zero: center=(0.7+14.134725141734695j), radius=0.1; original winding=1.000000000
+  X=    100 primes=   25: log10|reduced| range [2.185, 2.206]; raw winding=1.000000000; corrected winding=1.000000000; max ghost phase step=0.007 rad
+  X=  10000 primes= 1229: log10|reduced| range [2.289, 2.519]; raw winding=1.000000000; corrected winding=1.000000000; max ghost phase step=0.021 rad
+  X=1000000 primes=78498: log10|reduced| range [1.979, 2.547]; raw winding=1.000000000; corrected winding=1.000000000; max ghost phase step=0.036 rad
+
+Resolution cross-check: 1024 contour samples
+
+Nonzero critical-line control: center=(0.5+1j), radius=0.1; original winding=0.000000000
+  X=    100 primes=   25: log10|reduced| range [0.507, 1.212]; raw winding=-0.000000000; corrected winding=0.000000000; max ghost phase step=0.008 rad
+  X=  10000 primes= 1229: log10|reduced| range [-3.866, 5.742]; raw winding=-0.000000000; corrected winding=0.000000000; max ghost phase step=0.108 rad
+  X=1000000 primes=78498: log10|reduced| range [-110.472, -3.626]; raw winding=0.000000000; corrected winding=0.000000000; max ghost phase step=2.099 rad
