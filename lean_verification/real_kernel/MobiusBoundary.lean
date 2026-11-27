@@ -61,4 +61,40 @@ theorem geometric_budget (r C : ℝ) (hr : 1 < r) (hC : 0 ≤ C)
 #print axioms boundary_decomposition
 #print axioms kernel_new_prime
 #print axioms geometric_budget
+
+-- Almond compensation: a = earlier magnitude, b = later magnitude,
+-- d = elapsed logarithmic time. The exponential decay estimate is
+-- an explicit hypothesis here, not a claim about the global matching.
+theorem almond_pair_cost (a b d : ℝ)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : b ≤ a)
+    (hoverlap : d ≤ a + b)
+    (hdecay : a - b ≤ a * d / 2) :
+    |a - b| ≤ a ^ 2 := by
+  rw [abs_of_nonneg (sub_nonneg.mpr hab)]
+  have hd : d ≤ 2 * a := by linarith
+  have hm := mul_le_mul_of_nonneg_left hd ha
+  nlinarith
+
+-- Disjoint pairing bookkeeping: conditional on a supplied partition.
+theorem compensation_budget (paired unmatched : ℝ)
+    (pcost debt : ℝ) (hp : |paired| ≤ pcost)
+    (hu : |unmatched| ≤ debt) :
+    |paired + unmatched| ≤ pcost + debt :=
+  (abs_add_le _ _).trans (add_le_add hp hu)
+
+-- Time decay of an old contribution is distinct from new forcing.
+theorem decay_step_budget (old fresh a : ℝ)
+    (ha : 0 ≤ a) (ha1 : a ≤ 1) :
+    |a * old + fresh| ≤ |old| + |fresh| := by
+  calc
+    |a * old + fresh| ≤ |a * old| + |fresh| := abs_add_le _ _
+    _ ≤ |old| + |fresh| := by
+      rw [abs_mul, abs_of_nonneg ha]
+      have h := mul_le_mul_of_nonneg_right ha1 (abs_nonneg old)
+      linarith
+
+#print axioms almond_pair_cost
+#print axioms compensation_budget
+#print axioms decay_step_budget
+
 end MobiusBoundary
