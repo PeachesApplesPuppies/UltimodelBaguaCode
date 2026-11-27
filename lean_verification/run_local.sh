@@ -23,7 +23,7 @@ if ! command -v elan >/dev/null; then
 fi
 elan toolchain install "$(cat lean-toolchain)"
 lean --version
-python3 -m unittest discover -s ../ouroboros_proof_compressor/tests -v
+(cd ../ouroboros_proof_compressor && python3 -m unittest discover -s tests -v)
 lean Smoke.lean | tee "$OUT/smoke.log"
 if grep -Eiq 'sorryAx|declaration uses .?sorry' "$OUT/smoke.log"; then
   echo "Incomplete proof diagnostic"; exit 1
