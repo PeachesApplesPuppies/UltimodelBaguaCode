@@ -1,0 +1,25 @@
+name: Lean verification department
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lean_verification/**'
+      - 'ouroboros_proof_compressor/**'
+      - '.github/workflows/lean-verification.yml'
+permissions:
+  contents: read
+jobs:
+  starter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Lean starter and proof compressor
+        run: bash lean_verification/run_local.sh
+      - name: Save verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-verification-reports
+          path: lean_verification/results/
+          if-no-files-found: warn
