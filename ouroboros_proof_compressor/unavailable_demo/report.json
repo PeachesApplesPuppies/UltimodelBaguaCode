@@ -1,0 +1,47 @@
+{
+  "baseline": "unavailable",
+  "mode": "exact",
+  "budget": 64,
+  "trials": [
+    {
+      "lemmas": [
+        "hP",
+        "hPQ",
+        "hQR",
+        "hUnused",
+        "hDuplicate"
+      ],
+      "source_sha256": "7bb855d314df93e768fa9a97c9b22d5c5844d1f396a361916353aecc914e1564",
+      "status": "unavailable",
+      "detail": "[Errno 2] No such file or directory: 'lean'",
+      "axioms": [],
+      "seconds": 0.0,
+      "output": ""
+    }
+  ],
+  "original_lemmas": [
+    "hP",
+    "hPQ",
+    "hQR",
+    "hUnused",
+    "hDuplicate"
+  ],
+  "retained_lemmas": null,
+  "removed_count": null,
+  "search_complete_for_configured_checker": false,
+  "claim": "best accepted candidate only; no minimality claim",
+  "template_sha256": "bd857e507bdc3af7199001c9787a4d57568b09c3c152cca57e35a8114b184770",
+  "checker": {
+    "command": [
+      "lean"
+    ],
+    "project": "(build directory)",
+    "target": "ouroboros_chain",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "timeout_seconds": 30
+  }
+}

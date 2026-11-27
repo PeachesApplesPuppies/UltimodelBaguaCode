@@ -1,0 +1,13 @@
+test_axiom_policy (test_compressor.Tests.test_axiom_policy) ... ok
+test_budget_timeout_and_failed_baseline (test_compressor.Tests.test_budget_timeout_and_failed_baseline) ... ok
+test_dependency_source (test_compressor.Tests.test_dependency_source) ... ok
+test_exact_vs_greedy (test_compressor.Tests.test_exact_vs_greedy) ... ok
+test_exhaustive_monotone_oracles (test_compressor.Tests.test_exhaustive_monotone_oracles) ... ok
+test_greedy (test_compressor.Tests.test_greedy) ... ok
+test_render (test_compressor.Tests.test_render) ... ok
+test_subprocess_gate (test_compressor.Tests.test_subprocess_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 4.548s
+
+OK
