@@ -11,6 +11,7 @@
 <button class="primary" id="calc">Calculate</button>
 <details><summary>Expression reference</summary><p class="note">Use 2*t or 2t; write x*y for two named factors. Powers: ^ or **. Functions: sin, cos, tan (radians), exp, log (natural), sqrt, abs, inv, ratio(a,b)=a/b, delta(a,b)=b−a. Type f(x)=2x^2, g(u)=sin(u), y=x^2, or a bare expression in x or t. A function argument maps to the horizontal axis t. Other symbols are parameters. Also supports ln, log10, asin, acos, atan, sinh, cosh, tanh. A named § can be called at another point, e.g. R1(t+1). Unassigned names stay symbolic; give them values to plot.</p></details>
 </section><section><h2>Compare</h2><label>Mathematical rule<select id="rule"></select></label>
+<div id="invariantPanel" hidden><h3>Which invariants must be kept?</h3><p class="note">The active Lens value is the finite positive extent L of [0,L]. Divide by a fixed positive k. The graph shows source curves, not an infinite interval. Select requirements to retain in the exported record.</p><label>Scale divisor k<input id="invariantDivisor" type="number" value="2" step="any" min="0"></label><label class="check"><input type="checkbox" value="proportion" checked>Relative midpoint (1/2)</label><label class="check"><input type="checkbox" value="unboundedness" checked>Unboundedness (conditional)</label><label class="check"><input type="checkbox" value="scale" checked>Finite scale / reconstruction</label><div id="invariantResult" aria-live="polite"></div></div>
 <label>Polarity shift · p = <output id="pout">1</output><input type="range" min="-1" max="1" step="0.05" value="1" id="shift"></label>
 <div class="row"><button id="negative">−1</button><button id="neutral">0</button><button id="positive">+1</button></div><p class="note">The slider scales the function, derivative, integral, or shifted delta. Integration runs from the lower bound to the probe or graph coordinate. Lens chooses the reference used in all oriented rules.</p><div id="answer" class="stat" aria-live="polite"></div><div class="row"><button id="la">Lens A</button><button id="lb">Lens B</button><span id="comp"></span></div><p id="orient" class="stat"></p><div class="split" id="metrics"></div><div id="error" role="alert"></div></section>
 <section class="wide"><h2>Periodic table</h2><label>Send the clicked element to<select id="elementTarget"><option>A</option><option>B</option></select></label>
@@ -33,13 +34,32 @@
 <script>
 const $=id=>document.getElementById(id),fmt=v=>v===null?'—':Number(v.toPrecision(9)).toString();
 const captions={function:'Function · p × f',derivative:'Derivative · p × df/dt',integral:'Integral · p × ∫ f dt',shifted:'Shifted delta · p × Δ',product:'Product',sum:'Sum',quotient:'Reference / other',inverseQuotient:'Other / reference',oppositeDelta:'Opposite delta',A:'A',B:'B',delta:'Signed delta',magnitude:'Magnitude',X:'Normalized X',inverseX:'Inverse X',flow:'Flow’ · rate of change of delta'};
-const colors=['#186a66','#975213','#6b4193','#a02862','#625298','#485e14','#62532a','#514f83','#8c541d','#12665c','#af4c28','#2b58a3','#805c16','#75409a','#a83268','#315626'];let lens='A',vars=[],last=null,serial=0;
+/* BEGIN INVARIANT MODEL */
+function invariantRecord(source,L,k,requested) {
+ const keep=['proportion','unboundedness','scale'].filter(x=>requested.includes(x));
+ const r={model:'finite interval [0,L]',source,keep,extent:Number.isFinite(L)?L:null,divisor:Number.isFinite(k)?k:null,status:'unavailable',checks:{}};
+ if(!Number.isFinite(k)||k<=0){r.status='Enter a finite positive divisor.';return r}
+ if(!Number.isFinite(L)||L<=0){r.status='Selected Lens must evaluate to a finite positive extent.';return r}
+ const scaled=L/k;
+ if(!Number.isFinite(scaled)||scaled<=0||L/2<=0||scaled/2<=0){r.status='Scaled values exceed numeric range.';return r}
+ Object.assign(r,{status:'finite model evaluated',midpoint:L/2,scaled_extent:scaled,scaled_midpoint:scaled/2,relative_midpoint:0.5});
+ if(keep.includes('proportion'))r.checks.proportion={status:'identity',detail:'M(L)/L = M(L/k)/(L/k) = 1/2 for positive L and k.'};
+ if(keep.includes('unboundedness'))r.checks.unboundedness={status:'conditional theorem',detail:'If L tends to +infinity and k is fixed and positive, L/k and L/(2k) tend to +infinity. A finite probe does not establish the premise.'};
+ if(keep.includes('scale'))r.checks.scale={status:'retained',detail:'Keep finite L and k; L = k(L/k) in exact arithmetic. Numeric readings are rounded.'};
+ return r;
+}
+/* END INVARIANT MODEL */
+ const colors=['#186a66','#975213','#6b4193','#a02862','#625298','#485e14','#62532a','#514f83','#8c541d','#12665c','#af4c28','#2b58a3','#805c16','#75409a','#a83268','#315626'];let lens='A',vars=[],last=null,serial=0;
 try{vars=JSON.parse(localStorage.getItem('bce-ultimodel-v01')||'[]')}catch{}
 const experiments=[['Free function','f(x) = x^2','0'],['Period check · sine','sin(t)','sin(t+2*pi)'],['Period check · drift','t','t+2*pi'],['Linear flow','t','2*t'],['Triangle · vertex rate (events/s)','3','1'],['Triangle · boundary density (vertices/cm)','3','6'],['Equal','1','1'],['Polarity','1','2'],['Reduction','3','6'],['Negative','-1','1'],['Boundary','1','0'],['Constant delta','t','t+5'],['Periodic','sin(t)','cos(t)'],['Exponential','exp(t)','1'],['Shared zero','t','2*t']];
 experiments.forEach(([n],i)=>$('preset').add(new Option(n,i)));
 Object.entries(captions).forEach(([k,v],i)=>{const l=document.createElement('label');l.className='check';const cb=document.createElement('input');cb.type='checkbox';cb.value=k;cb.checked=k==='function';cb.onchange=()=>run();l.style.color=colors[i];l.append(cb,document.createTextNode(v));$('checks').append(l)});
 for(const [k,v] of Object.entries(captions))$('rule').add(new Option(v,k));
-function plotRule(){const key=$('rule').value;for(const c of $('checks').querySelectorAll('input'))c.checked=c.value===key;run()}
+ $('rule').add(new Option('Which invariants must be kept?','invariants'));
+ const invariantMode=()=>$('rule').value==='invariants';
+ function syncInvariantUI(){const on=invariantMode();$('invariantPanel').hidden=!on;for(const id of ['shift','negative','neutral','positive'])$(id).disabled=on;}
+ $('invariantPanel').addEventListener('change',()=>run());
+function plotRule(){syncInvariantUI();const key=invariantMode()?lens:$('rule').value;for(const c of $('checks').querySelectorAll('input'))c.checked=c.value===key;run()}
 $('rule').onchange=plotRule;
 function shift(value){$('shift').value=value;$('pout').textContent=value;if(!['function','derivative','integral'].includes($('rule').value))$('rule').value='shifted';plotRule()}
 $('shift').oninput=()=>shift($('shift').value);
@@ -54,7 +74,7 @@ function inputs(){
   return source;
  }
  const linkFactors=!$('frequency').value.trim() && !$('magnitudeInput').value.trim();
- return {frequency:linkFactors?expression("A"):$('frequency').value,magnitude:linkFactors?expression("B"):$('magnitudeInput').value,spin_C:expression("spinC"),reading_only:$('spinMode').value==="reading",sample_step:$('samples').open?$('step').value:null,anchor:$('anchor').value,rule:$('rule').value,polarity:Number($('shift').value),A:expression('A'),B:expression('B'),lens,t:$('t').value,lo:$('lo').value,hi:$('hi').value,parameters,variables:vars,plots:[...$('checks').querySelectorAll(':checked')].map(c=>c.value)}
+ return {frequency:linkFactors?expression("A"):$('frequency').value,magnitude:linkFactors?expression("B"):$('magnitudeInput').value,spin_C:expression("spinC"),reading_only:$('spinMode').value==="reading",sample_step:$('samples').open?$('step').value:null,anchor:$('anchor').value,rule:invariantMode()?lens:$('rule').value,polarity:Number($('shift').value),A:expression('A'),B:expression('B'),lens,t:$('t').value,lo:$('lo').value,hi:$('hi').value,parameters,variables:vars,plots:[...$('checks').querySelectorAll(':checked')].map(c=>c.value)}
 }
 function draw(data){
  const svg=$('graph');svg.replaceChildren();const add=(tag,attrs,txt)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(txt)n.textContent=txt;svg.append(n)};
@@ -90,7 +110,18 @@ function showResult(d){
  $('metrics').replaceChildren();function tile(n,value,sub,bad=false){let g=document.createElement('div');g.className='tile'+(bad?' boundary':'');let title=document.createElement('span'),b=document.createElement('b'),s=document.createElement('div');title.textContent=n;b.textContent=value;s.className='symbol';s.textContent=sub;g.append(title,b,s);$('metrics').append(g)}
  const val=k=>q[k].value===null?(q[k].status==='symbolic'?q[k].expr:q[k].status):fmt(q[k].value);
  const chosen=$('rule').value;
- $('answer').textContent=captions[chosen]+' = '+val(chosen)+'   ·   '+q[chosen].expr+(q[chosen].detail?' · '+q[chosen].detail:'');
+ if(chosen==='invariants'){
+ const box=$('invariantResult');box.replaceChildren();const r=d.invariant_selection;
+ $('answer').textContent='Ouroboros · '+r.status;
+ const add=s=>{const p=document.createElement('p');p.textContent=s;box.append(p)};
+ if(r.status==='finite model evaluated'){
+ add('L = '+fmt(r.extent)+' · midpoint = '+fmt(r.midpoint));
+ add('L/k = '+fmt(r.scaled_extent)+' · scaled midpoint = '+fmt(r.scaled_midpoint));
+ const labels={proportion:'Relative midpoint',unboundedness:'Unboundedness',scale:'Finite scale'};
+ for(const [key,c] of Object.entries(r.checks))add(labels[key]+' — '+c.status+': '+c.detail);
+ if(!r.keep.length)add('No invariants selected.');
+ }else add(r.status);
+ }else $('answer').textContent=captions[chosen]+' = '+val(chosen)+'   ·   '+q[chosen].expr+(q[chosen].detail?' · '+q[chosen].detail:'');
  if(chosen==='integral')$('answer').textContent+=' · Numerical definite integral'+(d.antiderivative?' · Antiderivative: '+d.antiderivative:'');
  tile('Source pair '+u+' : '+v,val(u)+' : '+val(v),'Inverse pair '+val(v)+' : '+val(u));
  tile('Normalized pair and its reversal',q.X.status.startsWith('Undefined')?val('X'):'1 : '+val('X'),q.X.value!==null?'Reversed pair '+val('X')+' : 1':'X = '+q.X.expr);
@@ -118,15 +149,16 @@ function showResult(d){
  draw(d);
 }
 async function run(extra=null){
- let id=++serial,p;last=null;$('promote').disabled=true;
+ let id=++serial,p;last=null;syncInvariantUI();$('promote').disabled=true;
  try{p=inputs();if(extra)p.variables=[...vars,extra];let resp=await fetch('/api/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});let d=await resp.json();if(id!==serial)return false;if(!resp.ok)throw Error(d.error);
  if(extra){vars=p.variables;localStorage.setItem('bce-ultimodel-v01',JSON.stringify(vars))}
- $('error').textContent='';last=d;showResult(d);$('promote').disabled=false;return true
- }catch(e){if(id!==serial)return false;$('answer').textContent='';$('spinOut').replaceChildren();renderCode(null);$('colorOut').textContent='';$('error').textContent=e.message;last={timestamp:new Date().toISOString(),A:$('A').value,B:$('B').value,lens,variables:vars,error:e.message,request:p};$('status').textContent='Error · see input message.';$('metrics').replaceChildren();$('graph').replaceChildren();$('comp').textContent='';$('orient').textContent='';$('graphstatus').textContent='';$('tableout').textContent='';return false}}
-function switchLens(l){lens=l;$('la').className=l==='A'?'active':'';$('lb').className=l==='B'?'active':'';run()}
+ if(invariantMode()){d.source_rule=d.rule;d.rule='invariants';d.invariant_selection=invariantRecord(d.lens,d.quantities[d.lens].value,$('invariantDivisor').valueAsNumber,[...$('invariantPanel').querySelectorAll('input[type=checkbox]:checked')].map(c=>c.value));}
+ $('error').textContent='';last=d;showResult(d);$('promote').disabled=invariantMode();return true
+ }catch(e){if(id!==serial)return false;$('answer').textContent='';$('invariantResult').replaceChildren();$('spinOut').replaceChildren();renderCode(null);$('colorOut').textContent='';$('error').textContent=e.message;last={timestamp:new Date().toISOString(),A:$('A').value,B:$('B').value,lens,variables:vars,error:e.message,request:p};$('status').textContent='Error · see input message.';$('metrics').replaceChildren();$('graph').replaceChildren();$('comp').textContent='';$('orient').textContent='';$('graphstatus').textContent='';$('tableout').textContent='';return false}}
+function switchLens(l){lens=l;$('la').className=l==='A'?'active':'';$('lb').className=l==='B'?'active':'';if(invariantMode())plotRule();else run()}
 $('la').onclick=()=>switchLens('A');$('lb').onclick=()=>switchLens('B');$('calc').onclick=()=>run();
 $('preset').onchange=()=>{const [n,a,b]=experiments[$('preset').value];$('A').value=a;$('B').value=b;$('t').value=n==='Shared zero'?0:1;$('rule').value=n.startsWith('Triangle')?'quotient':n==='Free function'?'function':'shifted';$('shift').value=1;$('pout').textContent=1;lens='A';$('la').className='active';$('lb').className='';plotRule()};
-$('promote').onclick=async()=>{if(!await run())return;await run({name:$('name').value.trim(),kind:'promotion',A:last.A,B:last.B,lens:last.lens,anchor:last.anchor,polarity:last.polarity,result:$('rule').value})};
+$('promote').onclick=async()=>{if(invariantMode()||!await run())return;await run({name:$('name').value.trim(),kind:'promotion',A:last.A,B:last.B,lens:last.lens,anchor:last.anchor,polarity:last.polarity,result:$('rule').value})};
 $('define').onclick=()=>run({name:$('name').value.trim(),kind:'variable',expression:$('expr').value});
 $('download').onclick=async()=>{await run();if(!last)return;const {plots,...record}=last;let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));a.download='ultimodel-record.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
 for(let id of ['A','B','lo','hi','t','params','anchor','step','frequency','magnitudeInput','spinC','spinMode'])$(id).addEventListener('change',()=>run());

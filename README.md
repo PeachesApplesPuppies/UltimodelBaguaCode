@@ -90,3 +90,7 @@ The local journal persists across restarts in ~/.bce-ultimodel/recognitions.sqli
 ## Public research archive — YanRiemann Requiem / Golden Bang (2026-11-26)
 
 Start with the [research archive index](research/ARCHIVE_INDEX.md), the [metaphor ledger](research/yanriemann-metaphor-ledger.md), and [Metaphors as a research instrument](research/metaphors-and-method.md). Includes historical drafts, executable numerical experiments, recorded results, negative controls, and open proof obligations. Human-directed, AI-assisted research; not an independently audited proof of the Riemann hypothesis.
+
+## Ouroboros — Which invariants must be kept?
+
+In **Compare → Mathematical rule**, select **Which invariants must be kept?**. Use the active Lens source as a finite positive extent L (try A = t at t = 100), enter a fixed positive divisor k (default 2), and select relative midpoint, conditional unboundedness, and/or finite scale/reconstruction. The panel shows L/2 and (L/k)/2; the graph shows source curves. Unboundedness is conditional on L tending to infinity with k fixed; a finite probe cannot prove it. Export calculation JSON includes `invariant_selection` and `source_rule`. Unchecked requirements are not asserted, but original source values are still exported. This is a browser-side diagnostic, not a promotable scalar rule or an infinity-valued input. The server API is unchanged. Run `node tests/test_invariant_selector.js` to check the browser model. See [Ouroboros research note](research/2026-11-27_ouroboros_scaling_invariant.md).
