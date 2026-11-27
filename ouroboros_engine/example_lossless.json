@@ -1,0 +1,64 @@
+{
+  "state": 13,
+  "observations": [
+    1,
+    3
+  ],
+  "candidates": [
+    13
+  ],
+  "supplement": "",
+  "recovered": 13,
+  "trace": [
+    {
+      "lenses": [],
+      "states": 15,
+      "distinct_observations": 1,
+      "largest_fiber": 15,
+      "supplement_bits": 4,
+      "lossless": false,
+      "uniform_residual_entropy_bits": 3.9068905956085187
+    },
+    {
+      "lenses": [
+        "mod 3 #1"
+      ],
+      "states": 15,
+      "distinct_observations": 3,
+      "largest_fiber": 5,
+      "supplement_bits": 3,
+      "lossless": false,
+      "uniform_residual_entropy_bits": 2.321928094887362,
+      "worst_case_bits_removed": 1,
+      "uniform_information_gain_bits": 1.5849625007211565
+    },
+    {
+      "lenses": [
+        "mod 3 #1",
+        "mod 5 #2"
+      ],
+      "states": 15,
+      "distinct_observations": 15,
+      "largest_fiber": 1,
+      "supplement_bits": 0,
+      "lossless": true,
+      "uniform_residual_entropy_bits": 0,
+      "worst_case_bits_removed": 3,
+      "uniform_information_gain_bits": 2.321928094887362
+    }
+  ],
+  "minimum_subsets": [
+    {
+      "lenses": [
+        "mod 3 #1",
+        "mod 5 #2"
+      ],
+      "states": 15,
+      "distinct_observations": 15,
+      "largest_fiber": 1,
+      "supplement_bits": 0,
+      "lossless": true,
+      "uniform_residual_entropy_bits": 0
+    }
+  ]
+}

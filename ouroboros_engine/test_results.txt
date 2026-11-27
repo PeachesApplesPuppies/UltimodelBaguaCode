@@ -1,0 +1,13 @@
+test_arbitrary_lenses (test_ouroboros.Tests.test_arbitrary_lenses) ... ok
+test_exhaustive_modular_formula (test_ouroboros.Tests.test_exhaustive_modular_formula) ... ok
+test_invalid (test_ouroboros.Tests.test_invalid) ... ok
+test_non_coprime (test_ouroboros.Tests.test_non_coprime) ... ok
+test_redundant (test_ouroboros.Tests.test_redundant) ... ok
+test_token_and_rank (test_ouroboros.Tests.test_token_and_rank) ... ok
+test_two_eyes (test_ouroboros.Tests.test_two_eyes) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.190s
+
+OK
+Exhaustive modular grid: 2048 configurations, 33792 successful round trips
