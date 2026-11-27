@@ -97,4 +97,21 @@ theorem decay_step_budget (old fresh a : ℝ)
 #print axioms compensation_budget
 #print axioms decay_step_budget
 
+
+-- Zero signed residual does not imply zero absolute magnitude.
+theorem zero_residual_hides_magnitude :
+    ∃ a b : ℝ, a + b = 0 ∧ |a| + |b| = 2 := by
+  exact ⟨1, -1, by norm_num, by norm_num⟩
+
+-- No finite clean prefix can rule out all later failures
+-- without further structural assumptions.
+theorem finite_clean_counterexample (N : ℕ) :
+    ∃ bad : ℕ → Prop, (∀ n < N, ¬ bad n) ∧ bad N := by
+  refine ⟨fun n => n = N, ?_, rfl⟩
+  intro n hn h
+  exact (ne_of_lt hn) h
+
+#print axioms zero_residual_hides_magnitude
+#print axioms finite_clean_counterexample
+
 end MobiusBoundary
