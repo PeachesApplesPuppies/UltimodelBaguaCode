@@ -1,0 +1,30 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const path = require('node:path');
+const html = fs.readFileSync(path.join(__dirname,'EarthDollar.html'),'utf8');
+const code = html.match(/const Engine = \(\(\) => \{[\s\S]*?\n\}\)\(\);/)[0];
+const E = vm.runInNewContext(code+'\nEngine');
+let count=0;
+function test(name,fn){fn();count++;console.log('PASS '+name);}
+function near(a,b){assert.ok(Math.abs(a-b)<1e-9*Math.max(1,Math.abs(b)),`${a} != ${b}`);}
+const source=fs.readFileSync(path.join(__dirname,'tariffs.csv'),'utf8');
+const reserve={q:3,inventory:90000000,inflow:0,protectedDaily:3000000,days:7,delivery:'',outstanding:10000000};
+test('published seed parses',()=>{const r=E.parseCSV(source);assert.equal(r.length,1);assert.equal(r[0].usd_per_m3,1.67);});
+test('default value and inverse',()=>{let r=E.valuation(3,1.67);near(r.usd,.00501);near(r.perUSD,1/.00501);});
+test('manual FX',()=>near(E.valuation(3,1.67,100).local,.501));
+test('zero price',()=>assert.equal(E.valuation(3,0).perUSD,null));
+test('invalid valuation',()=>{for(const q of [0,-1,'',Infinity])assert.throws(()=>E.valuation(q,1.67));});
+test('default reserve',()=>{let r=E.reserve(reserve);near(r.surplus,69000000);near(r.ceiling,23000000);near(r.coverage,2.3);});
+test('protected allocation shortfall',()=>{let r=E.reserve({...reserve,inventory:0});near(r.protectedShortfall,21000000);near(r.ceiling,0);});
+test('delivery cap',()=>{let r=E.reserve({...reserve,delivery:4000000});near(r.surplus,7000000);near(r.ceiling,7000000/3);});
+test('inflow replenishment',()=>near(E.reserve({...reserve,inflow:3000000}).surplus,90000000));
+test('zero obligations',()=>assert.equal(E.reserve({...reserve,outstanding:0}).coverage,null));
+test('CSV export/import round trip',()=>{const r=E.parseCSV(source);assert.equal(JSON.stringify(E.parseCSV(E.csv(r))),JSON.stringify(r));});
+test('CSV quoted commas and quotes',()=>{const r=E.parseCSV('date,series,basis,usd_per_m3,source\r\n2020-01-01,"A, B",potable_only,1,"x ""y"""\r\n');assert.equal(r[0].series,'A, B');assert.equal(r[0].source,'x "y"');});
+test('duplicate dates rejected',()=>assert.throws(()=>E.parseCSV(source+source.split('\n')[1]+'\n')));
+test('invalid date rejected',()=>assert.throws(()=>E.parseCSV(source.replace('2026-10-29','2026-02-30'))));
+test('mixed price basis rejected',()=>assert.throws(()=>E.parseCSV(source+'2026-10-30,GWI population-weighted,potable_only,1,source\n')));
+test('historical index',()=>{const r=E.parseCSV(source+'2027-01-01,GWI population-weighted,municipal_proxy,3.34,synthetic test only\n');const h=E.history(r,r[0].series,3);near(h[0].index,100);near(h[1].index,200);near(h[1].usd,.01002);});
+console.log(`${count} tests passed.`);
